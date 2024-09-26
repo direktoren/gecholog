@@ -1,0 +1,895 @@
+{{ define "form" }}
+  <form id="form" method="post" action="{{ .Submit }}">
+    <div class="white-frame">
+      <h2>
+        {{ .Headline }} -
+        {{ if eq .ErrorMsg "valid" }}
+          <span id="form-status" class="status-text valid">valid</span>
+        {{ else if or (eq $.Tutorial.ID "108")
+          (eq $.Tutorial.ID "207")
+          (eq $.Tutorial.ID "209")
+          (eq $.Tutorial.ID "303")
+        }}
+          <span id="form-status" class="status-text error">
+            <span class="tooltip tutorial-highlighted">
+              {{ .ErrorMsg }}<span class="tooltiptext"
+                >{{ .ErrorMsgTooltipText }}</span
+              >
+            </span>
+          </span>
+        {{ else }}
+          <span id="form-status" class="status-text error">
+            <span class="tooltip">
+              {{ .ErrorMsg }}<span class="tooltiptext"
+                >{{ .ErrorMsgTooltipText }}</span
+              >
+            </span>
+          </span>
+        {{ end }}
+      </h2>
+      <input type="hidden" name="key" value="{{ .Key }}" />
+    </div>
+
+    <div class="white-frame">
+      {{ range $index, $object := .Objects }}
+        {{ if eq $object.Type 0 }}
+          <!-- Text input field -->
+          <div class="form-container">
+            <div class="form-row">
+              {{ if or
+                (and (eq $.Tutorial.ID "106") (eq $object.Key "path"))
+                (and (eq $.Tutorial.ID "107") (eq $object.Key "url"))
+                (and (eq $.Tutorial.ID "204") (eq $object.Key "path"))
+                (and (eq $.Tutorial.ID "204") (eq $object.Key "url"))
+                (and (eq $.Tutorial.ID "302") (eq $object.Key "topicexactlogger"))
+                (and (eq $.Tutorial.ID "503") (eq $object.Key "url"))
+                (and (eq $.Tutorial.ID "503") (eq $object.Key "endpoint"))
+              }}
+                <div class="input-group tutorial-highlighted">
+                  <label for="{{ $object.Key }}" class="centered-text"
+                    >{{ $object.Headline }}</label
+                  >
+                  <input
+                    class="code-values"
+                    type="text"
+                    id="{{ $object.Key }}"
+                    name="{{ $object.Key }}"
+                    placeholder="{{ $object.Fields.Placeholder }}"
+                    value="{{ $object.Fields.Value }}"
+                  />
+                  {{ if eq "valid" $object.Fields.ErrorMsg }}
+                    <span
+                      id="{{ $object.Key }}-status"
+                      class="status-mini-block-right status-text valid"
+                      >valid</span
+                    >
+                  {{ else if or (eq $.Tutorial.ID "108")
+                    (eq $.Tutorial.ID "207")
+                    (eq $.Tutorial.ID "209")
+                    (eq $.Tutorial.ID "303")
+                  }}
+                    <span
+                      id="{{ $object.Key }}-status"
+                      class="status-mini-block-right status-text error"
+                    >
+                      <span class="tooltip tutorial-highlighted"
+                        >{{ $object.Fields.ErrorMsg }}
+                        <span class="tooltiptext"
+                          >{{ $object.Fields.ErrorMsgTooltipText }}</span
+                        >
+                      </span>
+                    </span>
+                  {{ else }}
+                    <span
+                      id="{{ $object.Key }}-status"
+                      class="status-mini-block-right status-text error"
+                    >
+                      <span class="tooltip"
+                        >{{ $object.Fields.ErrorMsg }}
+                        <span class="tooltiptext"
+                          >{{ $object.Fields.ErrorMsgTooltipText }}</span
+                        >
+                      </span>
+                    </span>
+                  {{ end }}
+                </div>
+              {{ else }}
+                <div class="input-group">
+                  <label for="{{ $object.Key }}" class="centered-text"
+                    >{{ $object.Headline }}</label
+                  >
+                  <input
+                    class="code-values"
+                    type="text"
+                    id="{{ $object.Key }}"
+                    name="{{ $object.Key }}"
+                    placeholder="{{ $object.Fields.Placeholder }}"
+                    value="{{ $object.Fields.Value }}"
+                  />
+                  {{ if eq "valid" $object.Fields.ErrorMsg }}
+                    <span
+                      id="{{ $object.Key }}-status"
+                      class="status-mini-block-right status-text valid"
+                      >valid</span
+                    >
+                  {{ else if or (eq $.Tutorial.ID "108")
+                    (eq $.Tutorial.ID "207")
+                    (eq $.Tutorial.ID "209")
+                    (eq $.Tutorial.ID "303")
+                  }}
+                    <span
+                      id="{{ $object.Key }}-status"
+                      class="status-mini-block-right status-text error"
+                    >
+                      <span class="tooltip tutorial-highlighted"
+                        >{{ $object.Fields.ErrorMsg }}
+                        <span class="tooltiptext"
+                          >{{ $object.Fields.ErrorMsgTooltipText }}</span
+                        >
+                      </span>
+                    </span>
+                  {{ else }}
+                    <span
+                      id="{{ $object.Key }}-status"
+                      class="status-mini-block-right status-text error"
+                    >
+                      <span class="tooltip"
+                        >{{ $object.Fields.ErrorMsg }}
+                        <span class="tooltiptext"
+                          >{{ $object.Fields.ErrorMsgTooltipText }}</span
+                        >
+                      </span>
+                    </span>
+                  {{ end }}
+                </div>
+              {{ end }}
+
+            </div>
+          </div>
+        {{ else if eq $object.Type 1 }}
+        {{ else if eq $object.Type 2 }}
+          <!-- Radio button field -->
+          <div class="form-container">
+            <span class="grouplabel centered-text">{{ $object.Headline }}</span>
+            <div class="radio-wrapper">
+              <div class="radio-container">
+                {{ range $option := $object.Fields.Options }}
+                  <div class="radio-item">
+                    <input
+                      type="radio"
+                      id="{{ $object.Key }}-{{ $option }}"
+                      name="{{ $object.Key }}"
+                      value="{{ $option }}"
+                      {{ if eq $object.Fields.Value $option }}checked{{ end }}
+                    />
+                    <label for="{{ $object.Key }}-{{ $option }}"
+                      >{{ $option }}</label
+                    >
+                  </div>
+                {{ end }}
+              </div>
+            </div>
+            {{ if eq "valid" $object.Fields.ErrorMsg }}
+              <span
+                id="{{ $object.Key }}-status"
+                class="status-mini-block-right status-text valid"
+                >valid</span
+              >
+            {{ else }}
+              <span
+                id="{{ $object.Key }}-status"
+                class="status-mini-block-right status-text error"
+                ><span class="tooltip"
+                  >{{ $object.Fields.ErrorMsg }}
+                  <span class="tooltiptext"
+                    >{{ $object.Fields.ErrorMsgTooltipText }}</span
+                  >
+                </span>
+              </span>
+            {{ end }}
+          </div>
+        {{ else if eq $object.Type 3 }}
+          <!-- Array field -->
+          <div class="form-container">
+            <span class="grouplabel centered-text">{{ $object.Headline }}</span>
+            {{ range $index, $pair := $object.Fields.Values }}
+              <div class="form-row">
+                <div class="input-group">
+                  <input
+                    class="code-values"
+                    type="text"
+                    id="{{ $object.Key }}-{{ $index }}"
+                    name="{{ $object.Key }}"
+                    placeholder="{{ $object.Fields.Placeholder }}"
+                    value="{{ $pair.Value }}"
+                  />
+                  {{ if eq "valid" $pair.ErrorMsg }}
+                    <span
+                      id="{{ $object.Key }}-{{ $index }}-status"
+                      class="status-mini-block-right status-text valid"
+                      >valid</span
+                    >
+                  {{ else }}
+                    <span
+                      id="{{ $object.Key }}-{{ $index }}-status"
+                      class="status-mini-block-right status-text error"
+                      ><span class="tooltip"
+                        >{{ $pair.ErrorMsg }}
+                        <span class="tooltiptext">
+                          {{ $pair.ErrorMsgTooltipText }}
+                        </span>
+                      </span>
+                    </span>
+                  {{ end }}
+                </div>
+              </div>
+            {{ end }}
+            <div class="form-row">
+              <div class="centered-group">
+                <div class="tooltip">
+                  <button
+                    type="button"
+                    class="character-button"
+                    data-key="{{ $object.Key }}"
+                    data-index="{{ $index }}"
+                    data-placeholder="{{ $object.Fields.Placeholder }}"
+                    onclick="addArray(this)"
+                  >
+                    +
+                  </button>
+                  <span class="tooltiptext"
+                    >Add New {{ $object.Fields.Placeholder }}</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        {{ else if eq $object.Type 4 }}
+          <h2>{{ $object.Fields.Value }}</h2>
+        {{ else if eq $object.Type 5 }}
+        {{ else if eq $object.Type 6 }}
+          <!-- Header field -->
+          <div class="form-container">
+            <span class=" grouplabel centered-text"
+              >{{ $object.Headline }}</span
+            >
+            {{ $headerCount := -1 }}
+            {{ range $header, $webHeader := $object.Fields.Headers }}
+              {{ range $index, $webHeaderValue := $webHeader.Values }}
+                {{ $headerCount = $index }}
+                <div class="form-row">
+                  <div class="input-group">
+                    {{ if and (eq $.Tutorial.ID "503") (eq $object.Key "outbound-headers") }}
+                      <div class="tutorial-highlighted">
+                        <input
+                          class="code-values"
+                          type="text"
+                          id="{{ $object.Key }}-{{ $header }}-{{ $index }}-header"
+                          name="{{ $object.Key }}"
+                          placeholder="header"
+                          value="{{ $webHeader.Header }}"
+                        />
+                      </div>
+                    {{ else }}
+                      <input
+                        class="code-values"
+                        type="text"
+                        id="{{ $object.Key }}-{{ $header }}-{{ $index }}-header"
+                        name="{{ $object.Key }}"
+                        placeholder="header"
+                        value="{{ $webHeader.Header }}"
+                      />
+                    {{ end }}
+                    {{ if eq "valid" $webHeader.ErrorMsg }}
+                      <span
+                        id="{{ $object.Key }}-{{ $header }}-{{ $index }}-header-status"
+                        class="status-mini-block-right status-text valid"
+                        >valid</span
+                      >
+                    {{ else if or
+                      (eq $.Tutorial.ID "108")
+                      (eq $.Tutorial.ID "207")
+                      (eq $.Tutorial.ID "209")
+                    }}
+                      <span
+                        id="{{ $object.Key }}-{{ $header }}-{{ $index }}-header-status"
+                        class="status-mini-block-right status-text error"
+                      >
+                        <span class="tooltip tutorial-highlighted"
+                          >{{ $webHeader.ErrorMsg }}
+                          <span class="tooltiptext">
+                            {{ $webHeader.ErrorMsgTooltipText }}
+                          </span>
+                        </span>
+                      </span>
+                    {{ else }}
+                      <span
+                        id="{{ $object.Key }}-{{ $header }}-{{ $index }}-header-status"
+                        class="status-mini-block-right status-text error"
+                      >
+                        <span class="tooltip"
+                          >{{ $webHeader.ErrorMsg }}
+                          <span class="tooltiptext">
+                            {{ $webHeader.ErrorMsgTooltipText }}
+                          </span>
+                        </span>
+                      </span>
+                    {{ end }}
+
+
+                    <!-- Status text element -->
+                  </div>
+                  <div class="input-group">
+                    {{ if and (eq $.Tutorial.ID "503") (eq $object.Key "outbound-headers") }}
+                      <div class="tutorial-highlighted">
+                        <input
+                          class="code-values"
+                          type="text"
+                          id="{{ $object.Key }}-{{ $header }}-{{ $index }}-value"
+                          name="{{ $object.Key }}"
+                          placeholder="value"
+                          value="{{ $webHeaderValue.Value }}"
+                        />
+                      </div>
+                    {{ else }}
+                      <input
+                        class="code-values"
+                        type="text"
+                        id="{{ $object.Key }}-{{ $header }}-{{ $index }}-value"
+                        name="{{ $object.Key }}"
+                        placeholder="value"
+                        value="{{ $webHeaderValue.Value }}"
+                      />
+                    {{ end }}
+                    {{ if eq "valid" $webHeaderValue.ErrorMsg }}
+                      <span
+                        id="{{ $object.Key }}-{{ $header }}-{{ $index }}-value-status"
+                        class="status-mini-block-right status-text valid"
+                        >valid</span
+                      >
+                    {{ else if or (eq $.Tutorial.ID "108") (eq $.Tutorial.ID "207") (eq $.Tutorial.ID "209") }}
+                      <span
+                        id="{{ $object.Key }}-{{ $header }}-{{ $index }}-value-status"
+                        class="status-mini-block-right status-text error"
+                        ><span class="tooltip tutorial-highlighted"
+                          >{{ $webHeaderValue.ErrorMsg }}
+                          <span class="tooltiptext">
+                            {{ $webHeaderValue.ErrorMsgTooltipText }}
+                          </span>
+                        </span>
+                      </span>
+                    {{ else }}
+                      <span
+                        id="{{ $object.Key }}-{{ $header }}-{{ $index }}-value-status"
+                        class="status-mini-block-right status-text error"
+                        ><span class="tooltip"
+                          >{{ $webHeaderValue.ErrorMsg }}
+                          <span class="tooltiptext">
+                            {{ $webHeaderValue.ErrorMsgTooltipText }}
+                          </span>
+                        </span>
+                      </span>
+                    {{ end }}
+
+
+                    <!-- Status text element -->
+                  </div>
+                </div>
+              {{ end }}
+            {{ end }}
+            <div class="form-row">
+              <div class="centered-group">
+                {{ if or (and (eq $.Tutorial.ID "205") (eq $headerCount -1) (eq $object.Key "ingress-headers"))
+                  (and (eq $.Tutorial.ID "206") (eq $headerCount -1) (eq $object.Key "outbound-headers"))
+                  (and (eq $.Tutorial.ID "208") (eq $object.Key "ingress-headers"))
+                }}
+                  <div class="tooltip tutorial-highlighted">
+                    <button
+                      type="button"
+                      class="character-button"
+                      data-key="{{ $object.Key }}"
+                      onclick="addHeader(this,true)"
+                    >
+                      +
+                    </button>
+                    <span class="tooltiptext">Add New Header</span>
+                  </div>
+                {{ else }}
+                  <div class="tooltip">
+                    <button
+                      type="button"
+                      class="character-button"
+                      data-key="{{ $object.Key }}"
+                      onclick="addHeader(this)"
+                    >
+                      +
+                    </button>
+                    <span class="tooltiptext">Add New Header</span>
+                  </div>
+                {{ end }}
+              </div>
+            </div>
+          </div>
+        {{ end }}
+
+      {{ end }}
+
+
+      <div class="space-between-group">
+        {{ if or
+          (eq $.Tutorial.ID "503")
+          (eq $.Tutorial.ID "504")
+          (eq $.Tutorial.ID "505")
+        }}
+          <div>
+            <button
+              type="button"
+              name="action"
+              value="cancel"
+              class="standard-button"
+              id="cancelButton"
+              tutorial="502"
+            >
+              Cancel
+            </button>
+          </div>
+        {{ else }}
+          <div>
+            <button
+              type="button"
+              name="action"
+              value="cancel"
+              class="standard-button"
+              id="cancelButton"
+            >
+              Cancel
+            </button>
+          </div>
+        {{ end }}
+        {{ if or (eq $.Tutorial.ID "106")
+          (eq $.Tutorial.ID "107")
+          (eq $.Tutorial.ID "204")
+          (eq $.Tutorial.ID "205")
+          (eq $.Tutorial.ID "206")
+          (eq $.Tutorial.ID "208")
+          (and (eq $.Tutorial.ID "108") (ne .ErrorMsg "valid"))
+          (and (eq $.Tutorial.ID "207") (ne .ErrorMsg "valid"))
+          (and (eq $.Tutorial.ID "209") (ne .ErrorMsg "valid"))
+          (eq $.Tutorial.ID "302")
+          (and (eq $.Tutorial.ID "303") (ne .ErrorMsg "valid"))
+        }}
+          <div class="tutorial-highlighted">
+            <div>
+              <button
+                type="submit"
+                name="redirect"
+                value="{{ .Reload }}?key={{ .Key }}&tutorial={{ $.Tutorial.NextID }}"
+                class="standard-button validate"
+              >
+                Save & Validate
+              </button>
+            </div>
+          </div>
+        {{ else if eq $.Tutorial.ID "504" }}
+          <div>
+            <button
+              type="submit"
+              name="redirect"
+              value="{{ .Reload }}?key={{ .Key }}&tutorial={{ $.Tutorial.ID }}"
+              class="standard-button validate"
+            >
+              Save & Validate
+            </button>
+          </div>
+        {{ else }}
+          <div>
+            <button
+              type="submit"
+              name="redirect"
+              value="{{ .Reload }}?key={{ .Key }}&tutorial={{ $.Tutorial.NextID }}"
+              class="standard-button validate"
+            >
+              Save & Validate
+            </button>
+          </div>
+        {{ end }}
+        {{ if and (eq $.Tutorial.ID "303") (eq .ErrorMsg "valid") }}
+          <div class="tutorial-highlighted">
+            <div>
+              <button
+                type="submit"
+                name="redirect"
+                value="{{ .Quit }}?tutorial={{ $.Tutorial.NextID }}"
+                class="standard-button edit"
+              >
+                Save & Exit
+              </button>
+            </div>
+          </div>
+        {{ else if or
+          (eq $.Tutorial.ID "503")
+          (eq $.Tutorial.ID "504")
+          (eq $.Tutorial.ID "505")
+        }}
+          <div>
+            <button
+              type="submit"
+              name="redirect"
+              value="{{ .Quit }}?tutorial=502"
+              class="standard-button edit"
+            >
+              Save & Exit
+            </button>
+          </div>
+        {{ else }}
+          <div>
+            <button
+              type="submit"
+              name="redirect"
+              value="{{ .Quit }}"
+              class="standard-button edit"
+            >
+              Save & Exit
+            </button>
+          </div>
+        {{ end }}
+      </div>
+    </div>
+  </form>
+{{ end }}
+
+
+<!doctype html>
+<html lang="en">
+  <head>
+    {{ template "head" . }}
+
+
+    <title>{{ .Headline }}</title>
+    <style>
+      form {
+        max-width: 400px;
+        width: 100%;
+      }
+
+      .form-container {
+        margin-bottom: 20px;
+        margin-left: 10px;
+      }
+
+      .form-container label {
+        display: block;
+        margin-bottom: 5px;
+      }
+
+      .grouplabel {
+        display: block;
+        margin-bottom: 5px;
+      }
+
+      .form-row {
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .radio-wrapper {
+        display: flex;
+        justify-content: center;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+        box-sizing: border-box;
+      }
+
+      .radio-item {
+        margin-right: 20px; /* Adds space between groups */
+      }
+
+      .radio-item input[type="radio"],
+      .radio-item label {
+        display: inline-block; /* Ensures elements are on the same line */
+        vertical-align: middle; /* Aligns elements vertically */
+        margin: 0 4px; /* Provides spacing around elements */
+      }
+
+      .input-group {
+        flex: 1;
+        /* Makes input groups flexible in size and equal in width */
+        margin-bottom: 5px;
+      }
+
+      .input-group label {
+        display: block;
+        margin-bottom: 5px;
+      }
+
+      .right {
+        text-align: right;
+        margin-top: 10px;
+      }
+
+      .input-group input,
+      .input-group textarea {
+        width: 100%;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+        box-sizing: border-box;
+        font-size: 16px;
+        /* Example font size */
+        /* Added for consistency in box sizing */
+      }
+
+      .centered-text {
+        text-align: center;
+      }
+
+      .status-mini-block-right {
+        display: block;
+        text-align: right;
+        font-size: 0.8em;
+        margin-top: 5px;
+      }
+
+      .add-margin-top {
+        margin-top: 40px;
+      }
+
+      .add-margin-bottom {
+        margin-bottom: 20px;
+      }
+
+      .tutorial-form {
+        flex: 1;
+        max-width: 400px;
+      }
+
+      .main-form {
+        flex: 1;
+        max-width: 400px;
+      }
+
+      table {
+        width: 95%;
+        border-collapse: separate; /* Changed from collapse to separate */
+        overflow: hidden; /* Added to ensure the rounded corners are visible */
+      }
+
+      th,
+      td {
+        padding: 10px;
+        border: 1px solid #5f4e4e;
+        border-spacing: 0; /* Added to manage spacing */
+        border-radius: 5px;
+      }
+
+      .relative {
+        position: relative;
+      }
+      pre {
+        overflow-x: clip;
+        font-family: "Fira Sans", "Courier New", Courier, monospace;
+        line-height: 1.5;
+        white-space: pre-wrap; /* This ensures the text will wrap within the container */
+        font-size: 12px;
+      }
+      code {
+        color: #333ed6;
+      }
+      .copybutton {
+        background-color: transparent;
+        border: none;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+        padding: 5px;
+        position: absolute; /* Position absolute within the pre block */
+        right: 15px; /* Position at the right edge */
+        top: 15px; /* Position at the top edge */
+        display: flex;
+        align-items: center;
+      }
+
+      .copybutton:hover {
+        transform: scale(1.1); /* Scale icon on hover for feedback */
+      }
+    </style>
+  </head>
+
+  <body>
+    {{ template "bodyheader" . }}
+
+    {{ if eq .Tutorial.ID "" }}
+      {{ template "form" . }}
+    {{ else }}
+      <div class="tutorial-container">
+        <div class="main-form">
+          {{ template "form" . }}
+        </div>
+        <div class="yellow-frame tutorial-form">
+          {{ if eq .Tutorial.ID "106" }}
+            {{ template "106" . }}
+          {{ else if eq .Tutorial.ID "107" }}
+            {{ template "107" . }}
+          {{ else if eq .Tutorial.ID "108" }}
+            {{ template "108" . }}
+          {{ else if eq .Tutorial.ID "204" }}
+            {{ template "204" . }}
+          {{ else if eq .Tutorial.ID "205" }}
+            {{ template "205" . }}
+          {{ else if eq .Tutorial.ID "206" }}
+            {{ template "206" . }}
+          {{ else if eq .Tutorial.ID "207" }}
+            {{ template "207" . }}
+          {{ else if eq .Tutorial.ID "208" }}
+            {{ template "208" . }}
+          {{ else if eq .Tutorial.ID "209" }}
+            {{ template "209" . }}
+          {{ else if eq .Tutorial.ID "302" }}
+            {{ template "302" . }}
+          {{ else if eq .Tutorial.ID "303" }}
+            {{ template "303" . }}
+          {{ else if eq .Tutorial.ID "503" }}
+            {{ template "503" . }}
+          {{ else if eq .Tutorial.ID "504" }}
+            {{ template "504" . }}
+          {{ else if eq .Tutorial.ID "505" }}
+            {{ template "505" . }}
+          {{ end }}
+          {{ template "tutorialbuttons" . }}
+        </div>
+      </div>
+    {{ end }}
+
+    {{ if eq $.Tutorial.ID "504" }}
+      <script>
+        window.onload = function () {
+          let url = new window.URL(window.location.href);
+
+          // Set the port to 5380
+          url.port = "5380";
+
+          // Remove the last part of the path
+          let pathSegments = url.pathname.split("/");
+          pathSegments.pop(); // Remove the last segment
+          pathSegments.pop(); // Remove the last segment
+          url.pathname = pathSegments.join("/");
+
+          // Remove all query variables
+          url.search = "";
+
+          // Get the new URL as a string
+          let newURL = url.toString();
+
+          // Remove the trailing slash if it exists
+          newURL = newURL.replace(/\/$/, "");
+
+          const codeBlock = document.getElementById("pythoncode");
+          let codeText = codeBlock.innerText;
+
+          // Replace the specific line
+          codeText = codeText.replace(
+            /gechologhost\s*=\s*"http:\/\/localhost:5380"/,
+            `gechologhost = "${newURL}"`,
+          );
+
+          // Update the code block with the new text
+          codeBlock.innerText = codeText;
+        };
+      </script>
+    {{ end }}
+        <script>
+            let edited = false;
+            let newHeaders = 0;
+            let newArrays = 0;
+
+            document.getElementById('form').addEventListener('input', function (event) {
+                // Ensure the event is coming from an input element
+                if (event.target.tagName.toLowerCase() === 'input') {
+                    const input = event.target;
+
+                    let spanID = input.id + '-status';
+                    if (input.type === 'radio') {
+                        spanID = input.name + '-status';
+                    }
+                    const statusSpan = document.getElementById(spanID);; // Assumes the status span is directly after the input
+
+                    // Update the status based on input content
+                    if (input.value === '') {
+                        statusSpan.textContent = 'empty';
+                        statusSpan.className = 'status-mini-block-right status-text empty'; // Apply error styling for empty input
+                    } else {
+                        statusSpan.textContent = 'to be validated';
+                        statusSpan.className = 'status-mini-block-right status-text'; // Default styling
+                    }
+                }
+
+                const formSpan = document.getElementById("form-status");
+                formSpan.textContent = 'to be validated';
+                formSpan.className = 'status-text empty'; // Default styling
+
+                edited = true;
+            });
+
+
+
+            // JavaScript to dynamically add/remove header names and values
+            function addArray(button) {
+                var objectKey = button.getAttribute('data-key');
+                var index = button.getAttribute('data-index');
+                var placeholder = button.getAttribute('data-placeholder');
+                const container = button.closest('.form-container');
+
+                const newRow = document.createElement('div');
+                newRow.classList.add('form-row');
+                newRow.innerHTML = `
+                    <div class="input-group">
+                        <input class="code-values" type="text" id="${objectKey}-${index}-${newArrays}" name="${objectKey}" placeholder="${placeholder}">
+                        <span id="${objectKey}-${index}-${newArrays}-status"
+                            class="status-mini-block-right status-text empty">empty</span>
+                    </div>
+            `;
+                // Insert the new row before the last .form-row in the container
+                const lastChild = container.lastElementChild;
+                container.insertBefore(newRow, lastChild);
+
+                edited = true;
+                newArrays++;
+            }
+
+            // JavaScript to dynamically add/remove header names and values
+            function addHeader(button,highlighted) {
+                var key = button.getAttribute('data-key');
+                const container = button.closest('.form-container');
+
+                const newRow = document.createElement('div');
+                newRow.classList.add('form-row');
+                if (highlighted) {
+                    newRow.classList.add('tutorial-highlighted');
+                }
+
+                // Remove the highlighting
+                button.setAttribute('onclick', 'addHeader(this)');
+                let buttonContainer = button.parentElement;
+                buttonContainer.classList.remove('tutorial-highlighted');
+
+                newRow.innerHTML = `
+                    <div class="input-group">
+                        <input class="code-values" type="text" id="${key}-newheader-${newHeaders}-header" name="${key}" placeholder="header">
+                        <span id="${key}-newheader-${newHeaders}-header-status"
+                            class="status-mini-block-right status-text empty">empty</span>
+                        <!-- Status text element -->
+                    </div>
+                    <div class="input-group">
+                        <input class="code-values" type="text" id="${key}-newheader-${newHeaders}-value" name="${key}" placeholder="value">
+                        <span id="${key}-newheader-${newHeaders}-value-status"
+                            class="status-mini-block-right status-text empty">empty</span>
+                        <!-- Status text element -->
+                    </div>
+            `;
+                // Insert the new row before the last .form-row in the container
+                const lastChild = container.lastElementChild;
+                container.insertBefore(newRow, lastChild);
+
+                edited = true;
+                newHeaders++;
+            }
+
+            document.getElementById('cancelButton').addEventListener('click', function () {
+                let tutorial = this.getAttribute('tutorial');
+                let tutorialStr = ""
+                if (tutorial) {
+                  tutorialStr = "?tutorial=" + tutorial;
+                }
+                if (edited) {
+                    var confirmLeave = confirm("You have unsaved changes. Are you sure you want to leave without saving?");
+                    if (confirmLeave) {
+                        window.location.href = `{{ .Quit }}${tutorialStr}`; // Redirect or handle as needed
+                    }
+                    return
+                }
+                window.location.href = `{{ .Quit }}${tutorialStr}`; // Redirect or handle as needed
+            });
+
+        </script>
+  </body>
+</html>

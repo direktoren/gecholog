@@ -1,0 +1,44 @@
+{
+   "version": "1.0.1",
+   "log_level": "INFO",
+   "mode": "azure_log_analytics_writer",
+   "retries": 3,
+   "retry_delay_milliseconds": 250,
+   "tls": {
+      "insecure": false,
+      "system_cert_pool": true,
+      "cert_files": []
+   },
+   "service_bus": {
+      "hostname": "localhost:4222",
+      "topic": "coburn.gl.nats2log",
+      "topic_exact_logger": "coburn.gl${NATS2LOG_LOGGER_SUBTOPIC}",
+      "token": "${NATS_TOKEN}"
+   },
+   "file_writer": {
+      "filename": "/app/log/disabled.jsonl",
+      "write_mode": "append"
+   },
+   "elastic_writer": {
+      "url": "https://localhost",
+      "port": 9200,
+      "index": "coburn1",
+      "username": "elastic",
+      "password": "${ELASTIC_PASSWORD}"
+   },
+   "azure_log_analytics_writer": {
+      "workspace_id": "${AZURE_LOG_ANALYTICS_WORKSPACE_ID}",
+      "shared_key": "${AZURE_LOG_ANALYTICS_SHARED_KEY}",
+      "log_type": "gecholog"
+   },
+   "rest_api_writer": {
+      "url": "https://localhost",
+      "port": 443,
+      "endpoint": "/log",
+      "headers": {
+         "headers1": [
+            "value1"
+         ]
+      }
+   }
+}

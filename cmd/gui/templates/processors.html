@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    {{ template "head" . }}
+
+
+    <title>{{ .Headline }}</title>
+    <style>
+      form {
+        min-width: 800px;
+        width: auto;
+      }
+
+      .form-container {
+        margin-bottom: 20px;
+        margin-left: 10px;
+      }
+
+      .form-row {
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .centered-text {
+        text-align: center;
+      }
+
+      .status-mini-block-right {
+        display: block;
+        text-align: right;
+        font-size: 0.8em;
+        margin-top: 5px;
+      }
+
+      .processor {
+        width: 200px;
+        background-color: white;
+        border-radius: 5px;
+        border: 1px solid black;
+        box-sizing: border-box;
+        text-align: center;
+      }
+
+      .processor-row {
+        display: block;
+        padding: 5px;
+      }
+
+      .async {
+        background-color: rgba(195, 196, 196, 0.435);
+      }
+
+      .extra-margin.left {
+        margin: 10px;
+        margin-left: 20px;
+      }
+
+      .extra-margin.right {
+        margin: 10px;
+        margin-right: 20px;
+      }
+    </style>
+  </head>
+
+  <body>
+    {{ template "bodyheader" . }}
+
+
+    <form id="processorListForm" method="get" action="{{ $.Reload }}">
+      <div class="white-frame">
+        <h2>
+          {{ .Headline }} -
+          <span
+            id="form-status"
+            class="status-text {{ if eq .ErrorMsg "valid" }}
+              valid
+            {{ else }}
+              error
+            {{ end }}"
+          >
+            {{ if eq .ErrorMsg "valid" }}
+              {{ .ErrorMsg }}
+            {{ else }}
+              <span class="tooltip"
+                >{{ .ErrorMsg }}
+                <span class="tooltiptext">
+                  {{ .ErrorMsgTooltipText }}
+                </span>
+              </span>
+            {{ end }}
+          </span>
+        </h2>
+      </div>
+
+      <div class="white-frame">
+        <div class="centered-group">
+          <div class="tooltip">
+            <button
+              type="button"
+              name="add"
+              value="{{ .Key }}"
+              class="character-button green"
+              onclick="window.location.href='{{ $.Reload }}-newsequence?before=true';"
+            >
+              +
+            </button>
+            <span class="tooltiptext">Add Sequence Processor</span>
+          </div>
+        </div>
+        {{ range $rowIndex, $processorRow := .Objects }}
+          <div class="centered-group">
+            {{ range $processorIndex, $processors := $processorRow.Fields.Objects }}
+              {{ if eq $processors.Fields.Async true }}
+                <div class="tooltip">
+                  <div class="processor async">
+                    <span
+                      class="processor-row 
+                    {{ if eq $processors.Headline "" }}
+                        status-text empty
+                      {{ end }}"
+                      >{{ if eq $processors.Headline "" }}
+                        Empty
+                      {{ else }}
+                        {{ $processors.Headline }}
+                      {{ end }}</span
+                    >
+                    <span
+                      class="processor-row status-text {{ if eq $processors.Fields.ErrorMsg "valid" }}
+                        valid
+                      {{ else }}
+                        error
+                      {{ end }}"
+                    >
+                      {{ if eq $processors.Fields.ErrorMsg "valid" }}
+                        {{ $processors.Fields.ErrorMsg }}
+                      {{ else }}
+                        <span class="tooltip"
+                          >{{ $processors.Fields.ErrorMsg }}
+                          <span class="tooltiptext">
+                            {{ $processors.Fields.ErrorMsgTooltipText }}
+                          </span>
+                        </span>
+                      {{ end }}
+                    </span>
+                  </div>
+                  <span class="tooltiptext">Asynchronous Processor</span>
+                </div>
+              {{ else }}
+                <div class="processor">
+                  <span
+                    class="processor-row 
+                  {{ if eq $processors.Headline "" }}
+                      status-text empty
+                    {{ end }}"
+                    >{{ if eq $processors.Headline "" }}
+                      Empty
+                    {{ else }}
+                      {{ $processors.Headline }}
+                    {{ end }}</span
+                  >
+                  <span
+                    class="processor-row status-text {{ if eq $processors.Fields.ErrorMsg "valid" }}
+                      valid
+                    {{ else }}
+                      error
+                    {{ end }}"
+                  >
+                    {{ if eq $processors.Fields.ErrorMsg "valid" }}
+                      {{ $processors.Fields.ErrorMsg }}
+                    {{ else }}
+                      <span class="tooltip"
+                        >{{ $processors.Fields.ErrorMsg }}
+                        <span class="tooltiptext">
+                          {{ $processors.Fields.ErrorMsgTooltipText }}
+                        </span>
+                      </span>
+                    {{ end }}
+                  </span>
+                </div>
+              {{ end }}
+              <div class="tooltip">
+                <button
+                  type="button"
+                  name="edit"
+                  value="{{ $processors.Key }}"
+                  class="character-button blue extra-margin left"
+                  onclick="window.location.href='{{ $.Reload }}-form?key={{ $processors.Key }}';"
+                >
+                  ✎
+                </button>
+                <span class="tooltiptext">Edit Processor</span>
+              </div>
+              <div class="tooltip">
+                <button
+                  type="button"
+                  name="delete"
+                  id="deleteButton"
+                  value="{{ $processors.Key }}"
+                  class="character-button red extra-margin right extra-margin left"
+                  data-area="{{ $.Reload }}"
+                  data-action="delete"
+                  data-key="{{ $processors.Key }}"
+                >
+                  -
+                </button>
+                <span class="tooltiptext">Delete Processor</span>
+              </div>
+            {{ end }}
+            <div class="tooltip">
+              <button
+                type="button"
+                name="add"
+                value="{{ $processorRow.Key }}"
+                class="character-button green"
+                onclick="window.location.href='{{ $.Reload }}-newparallel?row={{ $rowIndex }}';"
+              >
+                +
+              </button>
+              <span class="tooltiptext">Add Parallel Processor</span>
+            </div>
+          </div>
+        {{ end }}
+        <div class="centered-group">
+          <div class="tooltip">
+            <button
+              type="button"
+              name="add"
+              value="{{ .Key }}"
+              class="character-button green"
+              onclick="window.location.href='{{ $.Reload }}-newsequence';"
+            >
+              +
+            </button>
+            <span class="tooltiptext">Add Sequence Processor</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="white-frame">
+        <div class="space-between-group">
+          <button
+            type="button"
+            class="standard-button"
+            id="cancelButton"
+            onclick="window.location.href='menu';"
+          >
+            Exit
+          </button>
+          <button
+            type="submit"
+            name="redirect"
+            value=""
+            class="standard-button validate"
+          >
+            Validate
+          </button>
+        </div>
+      </div>
+    </form>
+
+    <script>
+      document
+        .getElementById("processorListForm")
+        .addEventListener("click", function (event) {
+          var target = event.target; // Get the element that was clicked
+
+          // Ensure the clicked element is one of the delete buttons
+          if (
+            target.classList.contains("character-button") &&
+            target.classList.contains("red")
+          ) {
+            var confirmLeave = confirm(
+              "Are you sure you want to delete this processor?",
+            );
+            if (confirmLeave) {
+              // If user confirms, construct the URL and redirect
+              var area = target.getAttribute("data-area");
+              var key = target.getAttribute("data-key");
+              window.location.href = `${area}-delete?key=${key}`;
+            } else {
+              // If user does not confirm, prevent any default action
+              event.preventDefault();
+            }
+          }
+        });
+    </script>
+  </body>
+</html>

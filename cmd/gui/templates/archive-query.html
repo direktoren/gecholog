@@ -1,0 +1,222 @@
+{{ define "archive-query" }}
+  <form id="archiveFileForm" method="post" action="{{ .Form }}">
+    <input type="hidden" name="redirect" value="{{ .Source }}" />
+    {{ if or
+      (eq $.Tutorial.ID "309")
+      (eq $.Tutorial.ID "406")
+    }}
+      <input type="hidden" name="tutorial" value="{{ $.Tutorial.NextID }}" />
+    {{ end }}
+    <div class="white-frame">
+      <h2>{{ .Headline }}</h2>
+
+      <div class="info-detail centered-text">
+        <span class="code-values">{{ .Prefix }}</span>
+        {{ if or
+          (eq $.Tutorial.ID "309")
+          (eq $.Tutorial.ID "406")
+        }}
+          <div class="tutorial-highlighted">
+            <input
+              type="text"
+              class="code-values"
+              id="file"
+              name="file"
+              placeholder="suffix"
+            />
+          </div>
+        {{ else }}
+          <input
+            type="text"
+            class="code-values"
+            id="file"
+            name="file"
+            placeholder="suffix"
+          />
+        {{ end }}
+        <span class="code-values">.json</span>
+      </div>
+      <div class="info-detail centered-text">
+        <span id="text-status" class="status-text error">empty</span>
+      </div>
+
+      <div class="space-between-group add-margin-top">
+        <button
+          type="button"
+          class="standard-button"
+          onclick="window.location.href='{{ .Source }}';"
+        >
+          Cancel
+        </button>
+        {{ if or
+          (eq $.Tutorial.ID "309")
+          (eq $.Tutorial.ID "406")
+        }}
+          <div id="tutorialSubmit">
+            <button
+              type="submit"
+              id="submit-button"
+              name="action"
+              value="archive"
+              class="standard-button disabled"
+              disabled
+            >
+              Archive
+            </button>
+          </div>
+        {{ else }}
+          <button
+            type="submit"
+            id="submit-button"
+            name="action"
+            value="archive"
+            class="standard-button disabled"
+            disabled
+          >
+            Archive
+          </button>
+        {{ end }}
+      </div>
+    </div>
+  </form>
+{{ end }}
+
+
+<!doctype html>
+<html lang="en">
+  <head>
+    {{ template "head" . }}
+
+
+    <title>Archive File</title>
+    <style>
+      form {
+        max-width: 800px;
+        width: 100%;
+      }
+
+      .info-detail {
+        padding: 15px;
+        padding-left: 30px;
+        /* Space between each detail line */
+      }
+
+      .centered-text {
+        text-align: center;
+      }
+
+      .add-margin-top {
+        margin-top: 30px;
+      }
+      .add-padding-left {
+        padding-left: 60px;
+      }
+
+      .tutorial-form {
+        flex: 1;
+        max-width: 400px;
+      }
+
+      .main-form {
+        flex: 3;
+        max-width: 800px;
+      }
+    </style>
+  </head>
+
+  <body>
+    {{ template "bodyheader" . }}
+
+    {{ if eq .Tutorial.ID "" }}
+      {{ template "archive-query" . }}
+    {{ else }}
+      <div class="tutorial-container">
+        <div class="main-form">
+          {{ template "archive-query" . }}
+        </div>
+        <div class="yellow-frame tutorial-form">
+          {{ if eq .Tutorial.ID "406" }}
+            {{ template "406" . }}
+          {{ else if eq .Tutorial.ID "309" }}
+            {{ template "309" . }}
+          {{ end }}
+          {{ template "tutorialbuttons" . }}
+        </div>
+      </div>
+    {{ end }}
+    <div
+      id="templateData"
+      data-invalid-entries="{{ range $part, $flag := .UniqueParts }}
+        {{ $part }},
+      {{ end }}
+      "
+    ></div>
+
+    <script>
+      let verify = false;
+
+      document.addEventListener("DOMContentLoaded", function () {
+        var inputField = document.getElementById("file");
+        var textStatus = document.getElementById("text-status");
+        var button = document.getElementById("submit-button");
+        var dataDiv = document.getElementById("templateData");
+        var tutorialDiv = document.getElementById("tutorialSubmit");
+
+        var invalidEntriesString = dataDiv.dataset.invalidEntries;
+        console.log("invaliding entriesString: " + invalidEntriesString);
+        var invalidEntries = invalidEntriesString
+          ? invalidEntriesString
+              .split(",")
+              .map((entry) => entry.replace(/\n/g, "").trim())
+              .filter((entry) => entry !== "")
+          : [];
+        console.log("invalidEntries: " + invalidEntries);
+
+        inputField.addEventListener("input", function () {
+          var input = this.value;
+
+          if (!/^[a-z0-9_/-]+$/i.test(input)) {
+            textStatus.style.display = "block";
+            textStatus.className = "status-text error";
+            textStatus.textContent = "[a-zA-Z0-9_-] only";
+            button.disabled = true;
+            button.className = "standard-button disabled";
+          } else if (invalidEntries.includes(input)) {
+            textStatus.style.display = "block";
+            textStatus.className = "status-text";
+            textStatus.textContent = "already exists but valid";
+            button.disabled = false;
+            button.className = "standard-button edit";
+            if (tutorialDiv) {
+              tutorialDiv.className = "tutorial-highlighted";
+            }
+            verify = true;
+          } else {
+            textStatus.style.display = "block";
+            textStatus.className = "status-text valid";
+            textStatus.textContent = "valid";
+            button.disabled = false;
+            button.className = "standard-button edit";
+            if (tutorialDiv) {
+              tutorialDiv.className = "tutorial-highlighted";
+            }
+            verify = false;
+          }
+        });
+      });
+
+      document
+        .getElementById("archiveFileForm")
+        .addEventListener("submit", function () {
+          if (verify) {
+            var confirmLeave = confirm(
+              "Are you sure you want to overwrite an existing file?",
+            );
+            if (!confirmLeave) {
+              event.preventDefault(); // Prevent form from submitting until validation is complete
+            }
+          }
+        });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,287 @@
+{{ define "publishform" }}
+  <form id="publishFileForm" method="post" action="write-to-production">
+    <input
+      type="hidden"
+      name="file"
+      value="{{ (index .FileInfo 0).Filename }}"
+    />
+    {{ if or
+      (eq $.Tutorial.ID "307")
+      (eq $.Tutorial.ID "404")
+    }}
+      <input type="hidden" name="tutorial" value="{{ $.Tutorial.NextID }}" />
+    {{ end }}
+    <div class="white-frame">
+      <h2>Deploy to Production</h2>
+    </div>
+
+    <div class="white-frame">
+      <h2>from Working File</h2>
+      <div class="info-detail">
+        <span class="labelformat">File:</span>
+        {{ if or
+          (eq $.Tutorial.ID "305")
+          (eq $.Tutorial.ID "402")
+        }}
+          <div class="fill">
+            <div class="tutorial-highlighted">
+              <span class="code-values"
+                >{{ (index .FileInfo 2).Filename }}</span
+              >
+            </div>
+          </div>
+        {{ else }}
+          <span class="fill code-values"
+            >{{ (index .FileInfo 2).Filename }}</span
+          >
+        {{ end }}
+        <span class="add-padding-right status-text valid">
+          <<- matches current</span
+        >
+      </div>
+      <h2>to Deployed</h2>
+      <div class="info-detail">
+        <span class="labelformat">File:</span>
+        {{ if or
+          (eq $.Tutorial.ID "306")
+          (eq $.Tutorial.ID "403")
+        }}
+          <div class="tutorial-highlighted">
+            <span class="code-values">{{ (index .FileInfo 0).Filename }}</span>
+          </div>
+        {{ else }}
+          <span class="code-values">{{ (index .FileInfo 0).Filename }}</span>
+        {{ end }}
+      </div>
+      {{ if not .Flag.IsArchived }}
+        <div class="info-detail">
+          <span class="labelformat">Archived:</span>
+          {{ if or
+            (eq $.Tutorial.ID "306")
+            (eq $.Tutorial.ID "403")
+          }}
+            <div class="tutorial-highlighted">
+              <span class="code-values status-text error">
+                <span class="tooltip"
+                  >No
+                  <span class="tooltiptext">
+                    The production file has no copy in archive
+                  </span>
+                </span>
+              </span>
+            </div>
+          {{ else }}
+            <span class="code-values status-text error">
+              <span class="tooltip"
+                >No
+                <span class="tooltiptext">
+                  The production file has no copy in archive
+                </span>
+              </span>
+            </span>
+          {{ end }}
+
+        </div>
+      {{ else }}
+        <div class="info-detail">
+          <span class="labelformat">Archived:</span>
+          <span class="code-values status-text valid">
+            <span class="tooltip"
+              >Yes
+              <span class="tooltiptext">
+                {{ $first := 0 }}
+                {{ range $file := .FileInfo }}
+                  {{ if $file.Match }}
+                    {{ if ne (index $.FileInfo 0).Filename $file.Filename }}
+                      {{ if ne $first 0 }},{{ end }}
+                      {{ $file.Filename }}
+                      {{ $first = 1 }}
+                    {{ end }}
+                  {{ end }}
+                {{ end }}
+              </span>
+            </span>
+          </span>
+        </div>
+      {{ end }}
+
+
+      <div class="space-between-group add-margin-top">
+        <div>
+          <button
+            type="button"
+            class="standard-button"
+            onclick="window.location.href='{{ .Redirect }}';"
+          >
+            Exit
+          </button>
+        </div>
+        {{ if and (eq $.Tutorial.ID "306") (not .Flag.IsArchived) }}
+          <div class="tutorial-highlighted">
+            <button
+              type="button"
+              class="standard-button"
+              onclick="window.location.href='archive-productionfile?tutorial=309';"
+            >
+              Archive Deployed
+            </button>
+          </div>
+        {{ else if and (eq $.Tutorial.ID "403") (not .Flag.IsArchived) }}
+          <div class="tutorial-highlighted">
+            <button
+              type="button"
+              class="standard-button"
+              onclick="window.location.href='archive-productionfile?tutorial=406';"
+            >
+              Archive Deployed
+            </button>
+          </div>
+        {{ else }}
+          <div>
+            <button
+              type="button"
+              class="standard-button"
+              onclick="window.location.href='archive-productionfile';"
+            >
+              Archive Deployed
+            </button>
+          </div>
+        {{ end }}
+
+        {{ if or
+          (eq $.Tutorial.ID "307")
+          (eq $.Tutorial.ID "404")
+        }}
+          <div class="tutorial-highlighted">
+            <button
+              type="submit"
+              id="submit-button"
+              class="standard-button edit"
+            >
+              Deploy
+            </button>
+          </div>
+        {{ else }}
+          <div>
+            <button
+              type="submit"
+              id="submit-button"
+              class="standard-button edit"
+            >
+              Deploy
+            </button>
+          </div>
+        {{ end }}
+
+      </div>
+    </div>
+  </form>
+{{ end }}
+
+
+<!doctype html>
+<html lang="en">
+  <head>
+    {{ template "head" . }}
+
+
+    <title>Publish</title>
+    <style>
+      form {
+        max-width: 800px;
+        width: 100%;
+      }
+
+      .info-detail {
+        display: flex;
+        padding: 15px;
+        padding-left: 30px;
+        /* Space between each detail line */
+      }
+
+      .info-detail label {
+        font-weight: bold;
+        margin-left: 10px;
+        margin-right: 5px;
+        /* Space between label and value */
+        /* Bold font for labels */
+      }
+
+      .labelformat {
+        font-weight: bold;
+        margin-right: 5px;
+        /* Space between label and value */
+        /* Bold font for labels */
+      }
+
+      .add-margin-top {
+        margin-top: 30px;
+      }
+      .add-padding-left {
+        padding-left: 60px;
+      }
+
+      .add-padding-right {
+        padding-right: 30px;
+      }
+
+      .fill {
+        flex-grow: 1;
+      }
+
+      .tutorial-form {
+        flex: 1;
+        max-width: 400px;
+      }
+
+      .main-form {
+        flex: 3;
+        max-width: 800px;
+      }
+    </style>
+  </head>
+
+  <body>
+    {{ template "bodyheader" . }}
+
+    {{ if eq .Tutorial.ID "" }}
+      {{ template "publishform" . }}
+    {{ else }}
+      <div class="tutorial-container">
+        <div class="main-form">
+          {{ template "publishform" . }}
+        </div>
+        <div class="yellow-frame tutorial-form">
+          {{ if eq .Tutorial.ID "305" }}
+            {{ template "305" . }}
+          {{ else if eq .Tutorial.ID "306" }}
+            {{ template "306" . }}
+          {{ else if eq .Tutorial.ID "307" }}
+            {{ template "307" . }}
+          {{ else if eq .Tutorial.ID "402" }}
+            {{ template "402" . }}
+          {{ else if eq .Tutorial.ID "403" }}
+            {{ template "403" . }}
+          {{ else if eq .Tutorial.ID "404" }}
+            {{ template "404" . }}
+          {{ end }}
+          {{ template "tutorialbuttons" . }}
+        </div>
+      </div>
+    {{ end }}
+
+    <script>
+      document.getElementById('publishFileForm').addEventListener('submit', function(event) {
+        var isArchived = '{{ .Flag.IsArchived }}' === 'true';
+
+        if (!isArchived) {
+          var confirmLeave = confirm("Are you sure you want to publish without archiving the production file?");
+          if (!confirmLeave) {
+              // Prevent the form from submitting
+              event.preventDefault();
+          }
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,169 @@
+{
+   "gateway_id": "TST00001",
+   "version": "1.0.1",
+   "log_level": "INFO",
+   "tls": {
+      "ingress": {
+         "enabled": false,
+         "certificate_file": "",
+         "private_key_file": ""
+      },
+      "outbound": {
+         "insecure": false,
+         "system_cert_pool": true,
+         "cert_files": []
+      }
+   },
+   "service_bus": {
+      "hostname": "localhost:4222",
+      "topic": "coburn.gl.gecholog",
+      "topic_exact_isalive": "coburn.gl.isalive",
+      "topic_exact_logger": "coburn.gl.logger",
+      "token": "${NATS_TOKEN}"
+   },
+   "gl_port": 5380,
+   "session_id_header": "Session-Id",
+   "masked_headers": [
+      "Api-Key",
+      "Authorization",
+      "X-Amz-Security-Token"
+   ],
+   "remove_headers": [
+      "Content-Length"
+   ],
+   "log_unauthorized": false,
+   "routers": [
+      {
+         "path": "/restricted/",
+         "ingress": {
+            "headers": {
+               "Api-Key": [
+                  "${GECHOLOG_API_KEY}"
+               ],
+               "Content-Type": [
+                  "application/json"
+               ]
+            }
+         },
+         "outbound": {
+            "url": "${AISERVICE_API_BASE}",
+            "endpoint": "",
+            "headers": {
+               "Api-Key": [
+                  "${AISERVICE_API_KEY}"
+               ],
+               "Content-Type": [
+                  "application/json"
+               ]
+            }
+         }
+      },
+      {
+         "path": "/service/capped/",
+         "ingress": {
+            "headers": {
+               "Content-Type": [
+                  "application/json"
+               ]
+            }
+         },
+         "outbound": {
+            "url": "${AISERVICE_API_BASE}",
+            "endpoint": "",
+            "headers": {
+               "Content-Type": [
+                  "application/json"
+               ]
+            }
+         }
+      },
+      {
+         "path": "/service/standard/",
+         "ingress": {
+            "headers": {
+               "Content-Type": [
+                  "application/json"
+               ]
+            }
+         },
+         "outbound": {
+            "url": "${AISERVICE_API_BASE}",
+            "endpoint": "",
+            "headers": {
+               "Content-Type": [
+                  "application/json"
+               ]
+            }
+         }
+      },
+      {
+         "path": "/echo/",
+         "ingress": {
+            "headers": {}
+         },
+         "outbound": {
+            "url": "https://localhost",
+            "endpoint": "",
+            "headers": {
+               "Content-Type": [
+                  "application/json"
+               ]
+            }
+         }
+      }
+   ],
+   "request": {
+      "processors": [
+         [
+            {
+               "name": "token_counter",
+               "modifier": false,
+               "required": false,
+               "async": false,
+               "input_fields_include": [
+                  "gl_path",
+                  "ingress_payload"
+               ],
+               "input_fields_exclude": [],
+               "output_fields_write": [
+                  "control"
+               ],
+               "service_bus_topic": "coburn.gl.tokencounter",
+               "timeout": 50
+            }
+         ]
+      ]
+   },
+   "response": {
+      "processors": [
+         [
+            {
+               "name": "token_counter",
+               "modifier": false,
+               "required": false,
+               "async": true,
+               "input_fields_include": [
+                  "gl_path",
+                  "inbound_payload"
+               ],
+               "input_fields_exclude": [],
+               "output_fields_write": [
+                  "token_count"
+               ],
+               "service_bus_topic": "coburn.gl.tokencounter",
+               "timeout": 50
+            }
+         ]
+      ]
+   },
+   "logger": {
+      "request": {
+         "fields_include": [],
+         "fields_exclude": []
+      },
+      "response": {
+         "fields_include": [],
+         "fields_exclude": []
+      }
+   }
+}

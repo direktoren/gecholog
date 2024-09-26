@@ -1,0 +1,383 @@
+{{ define  "menuform" }}
+  <form id="publishFileForm" method="get" action="publish">
+    {{ if or
+      (and (eq .Tutorial.ID "304") (eq .Status.ExitCode "Valid"))
+      (and (eq .Tutorial.ID "401") (eq .Status.ExitCode "Valid"))
+    }}
+      <input type="hidden" name="tutorial" value="{{ .Tutorial.NextID }}" />
+    {{ end }}
+    <div class="empty-frame">
+      <div class="white-frame">
+        <h2>{{ .Status.Headline }}</h2>
+      </div>
+    </div>
+
+    <div class="empty-frame">
+      <div class="white-frame">
+        <h2>Deployed</h2>
+        <div>
+          <div class="info-detail">
+            <b>File:</b>
+            <span class="code-values">{{ .Status.ProductionFile }}</span>
+          </div>
+          <div class="info-detail">
+            <b>Deployed:</b>
+            <span class="code-values">{{ .Status.DeployedChecksum }}</span>
+          </div>
+          <div class="info-detail">
+            <b>Production:</b>
+            {{ if eq .Status.Deployed "Match" }}
+              <span class="code-values"
+                >{{ .Status.ProductionChecksum }}
+              </span>
+            {{ else }}
+              {{ if or
+                (eq $.Tutorial.ID "308")
+                (eq $.Tutorial.ID "405")
+              }}
+                <div class="tutorial-highlighted">
+                  <span class="code-values status-text error">
+                    <span class="tooltip"
+                      >{{ .Status.ProductionChecksum }}
+                      <span class="tooltiptext">
+                        Production checksum does not match deployed. Try Reload.
+                      </span>
+                    </span>
+                  </span>
+                </div>
+              {{ else }}
+                <span class="code-values status-text error">
+                  <span class="tooltip"
+                    >{{ .Status.ProductionChecksum }}
+                    <span class="tooltiptext">
+                      Production checksum does not match deployed. Try Reload.
+                    </span>
+                  </span>
+                </span>
+              {{ end }}
+
+            {{ end }}
+          </div>
+        </div>
+        <h2>Staged</h2>
+        <div>
+          <div class="info-detail">
+            <b>File:</b>
+            <span class="code-values">{{ .Status.WorkingFile }}</span>
+          </div>
+          <div class="info-detail">
+            <b>Checksum:</b>
+            <span class="code-values">{{ .Status.WorkingChecksum }}</span>
+          </div>
+          <div class="info-detail">
+            <b>Status:</b>
+            {{ if or
+              (and (eq $.Tutorial.ID "308") (eq .Status.StagedFormat "valid"))
+              (and (eq $.Tutorial.ID "405") (eq .Status.StagedFormat "valid"))
+              (eq $.Tutorial.ID "501")
+            }}
+              <div class="tutorial-highlighted">
+                <span class="status-text {{ .Status.StagedFormat }}"
+                  >{{ .Status.Staged }}</span
+                >
+              </div>
+            {{ else }}
+              <span class="status-text {{ .Status.StagedFormat }}"
+                >{{ .Status.Staged }}</span
+              >
+            {{ end }}
+
+          </div>
+          <div class="info-detail">
+            <b>Validation:</b>
+            <span class="status-text {{ .Status.ExitCodeFormat }}">
+              {{ if ne .Status.ExitCode "Valid" }}
+                {{ if or
+                  (eq $.Tutorial.ID "304")
+                  (eq $.Tutorial.ID "401")
+                }}
+                  <span class="tooltip tutorial-highlighted"
+                    >{{ .Status.ExitCode }}
+                    <span class="tooltiptext">
+                      Check invalid fields. Deployment disabled.
+                    </span>
+                  </span>
+                {{ else }}
+                  <span class="tooltip"
+                    >{{ .Status.ExitCode }}
+                    <span class="tooltiptext">
+                      Check invalid fields. Deployment disabled.
+                    </span>
+                  </span>
+                {{ end }}
+              {{ else }}
+                {{ .Status.ExitCode }}
+              {{ end }}
+            </span>
+          </div>
+          <div class="info-detail">
+            <b>Rejected Fields:</b>
+            <span class="status-text {{ .Status.RejectedFieldsFormat }}">
+              {{ if eq .Status.RejectedFields "Rejected Fields exist" }}
+                <span class="tooltip"
+                  >{{ .Status.RejectedFields }}
+                  <span class="tooltiptext">
+                    Rejected fields exist. Check rejected fields.
+                  </span>
+                </span>
+              {{ else }}
+                {{ .Status.RejectedFields }}
+              {{ end }}
+            </span>
+          </div>
+        </div>
+        <div class="space-between-group add-margin-top">
+          <button
+            type="button"
+            class="standard-button"
+            onclick="window.location.href='../mainmenu';"
+          >
+            Exit
+          </button>
+          <button
+            type="button"
+            class="standard-button"
+            onclick="window.location.href='archive-workingfile';"
+          >
+            Archive
+          </button>
+          <button
+            type="button"
+            class="standard-button"
+            onclick="window.location.href='select-file-to-open';"
+          >
+            Open File
+          </button>
+          {{ if or
+            (and (eq $.Tutorial.ID "308") (ne .Status.Deployed "Match"))
+            (and (eq $.Tutorial.ID "405") (ne .Status.Deployed "Match"))
+          }}
+            <div class="tutorial-highlighted">
+              <button
+                type="button"
+                class="standard-button validate"
+                onclick="window.location.href='menu?tutorial={{ $.Tutorial.NextID }}';"
+              >
+                Reload
+              </button>
+            </div>
+          {{ else }}
+            <button
+              type="button"
+              class="standard-button validate"
+              onclick="window.location.href='menu';"
+            >
+              Reload
+            </button>
+          {{ end }}
+
+          {{ if or
+            (and (eq $.Tutorial.ID "304") (ne .Status.DeployButton "disabled") (eq .Status.ExitCode "Valid"))
+            (and (eq $.Tutorial.ID "401") (ne .Status.DeployButton "disabled") (eq .Status.ExitCode "Valid"))
+          }}
+            <div class="tutorial-highlighted">
+              <button
+                type="submit"
+                class="standard-button {{ .Status.DeployButton }}"
+              >
+                Deploy
+              </button>
+            </div>
+          {{ else }}
+            <button
+              type="submit"
+              class="standard-button {{ .Status.DeployButton }}"
+            >
+              Deploy
+            </button>
+          {{ end }}
+        </div>
+      </div>
+    </div>
+
+    <div class="empty-frame">
+      <div class="white-frame">
+        <h2>Edit Staged</h2>
+        {{ range $area := .Areas }}
+          {{ if or
+            (and (eq $.Tutorial.ID "301") (eq $area.Headline "Service Bus Config"))
+            (and (eq $.Tutorial.ID "501") (eq $area.Headline "Routers"))
+          }}
+            <div class="centered-group">
+              <div class="tutorial-highlighted">
+                {{ if eq $area.ErrorMsg "valid" }}
+                  <button
+                    type="button"
+                    class="standard-button wide-menu-button"
+                    onclick="window.location.href='{{ $area.Form }}?tutorial={{ $.Tutorial.NextID }}';"
+                  >
+                    {{ $area.Headline }} -
+                    <span class="status-text valid">valid</span>
+                  </button>
+                {{ else }}
+                  <button
+                    type="button"
+                    class="standard-button wide-menu-button"
+                    onclick="window.location.href='{{ $area.Form }}?tutorial={{ $.Tutorial.NextID }}';"
+                  >
+                    {{ $area.Headline }} -
+                    <span class="status-text error">
+                      <span class="tooltip"
+                        >{{ $area.ErrorMsg }}
+                        <span class="tooltiptext">
+                          {{ $area.ErrorMsgTooltipText }}
+                        </span>
+                      </span>
+                    </span>
+                  </button>
+                {{ end }}
+              </div>
+            </div>
+          {{ else }}
+            <div class="centered-group">
+              {{ if eq $area.ErrorMsg "valid" }}
+                <button
+                  type="button"
+                  class="standard-button wide-menu-button"
+                  onclick="window.location.href='{{ $area.Form }}';"
+                >
+                  {{ $area.Headline }} -
+                  <span class="status-text valid">valid</span>
+                </button>
+              {{ else }}
+                {{ if or
+                  (and (eq $.Tutorial.ID "304") (eq $area.ErrorMsg "invalid"))
+                  (and (eq $.Tutorial.ID "401") (eq $area.ErrorMsg "invalid"))
+                }}
+                  <button
+                    type="button"
+                    class="standard-button wide-menu-button"
+                    onclick="window.location.href='{{ $area.Form }}';"
+                  >
+                    {{ $area.Headline }} -
+                    <span class="status-text error">
+                      <span class="tooltip tutorial-highlighted"
+                        >{{ $area.ErrorMsg }}
+                        <span class="tooltiptext">
+                          {{ $area.ErrorMsgTooltipText }}
+                        </span>
+                      </span>
+                    </span>
+                  </button>
+                {{ else }}
+                  <button
+                    type="button"
+                    class="standard-button wide-menu-button"
+                    onclick="window.location.href='{{ $area.Form }}';"
+                  >
+                    {{ $area.Headline }} -
+                    <span class="status-text error">
+                      <span class="tooltip"
+                        >{{ $area.ErrorMsg }}
+                        <span class="tooltiptext">
+                          {{ $area.ErrorMsgTooltipText }}
+                        </span>
+                      </span>
+                    </span>
+                  </button>
+                {{ end }}
+
+              {{ end }}
+            </div>
+          {{ end }}
+        {{ end }}
+      </div>
+    </div>
+  </form>
+{{ end }}
+
+
+<!doctype html>
+<html lang="en">
+  <head>
+    {{ template "head" . }}
+
+
+    <title>{{ .Status.Headline }}</title>
+    <style>
+      empty-frame {
+        max-width: 800px;
+        width: 100%;
+      }
+
+      .info-detail {
+        padding: 10px;
+        /* Space between each detail line */
+      }
+
+      .add-margin-top {
+        margin-top: 50px;
+      }
+
+      .add-margin-bottom {
+        margin-bottom: 40px;
+      }
+
+      .wide-menu-button {
+        width: 600px;
+        background-color: white;
+        color: black;
+        border: 1px solid black;
+      }
+
+      .tutorial-form {
+        flex: 1;
+        max-width: 400px;
+      }
+
+      .main-form {
+        flex: 3;
+        max-width: 800px;
+      }
+    </style>
+  </head>
+
+  <body>
+    {{ template "bodyheader" . }}
+
+    {{ if eq .Tutorial.ID "" }}
+      {{ template "menuform" . }}
+    {{ else }}
+      <div class="tutorial-container">
+        <div class="main-form">
+          {{ template "menuform" . }}
+        </div>
+        <div class="yellow-frame tutorial-form">
+          {{ if eq .Tutorial.ID "301" }}
+            {{ template "301" . }}
+          {{ else if eq .Tutorial.ID "304" }}
+            {{ template "304" }}
+          {{ else if eq .Tutorial.ID "308" }}
+            {{ template "308" }}
+          {{ else if eq .Tutorial.ID "401" }}
+            {{ template "401" }}
+          {{ else if eq .Tutorial.ID "405" }}
+            {{ template "405" }}
+          {{ else if eq .Tutorial.ID "501" }}
+            {{ template "501" }}
+          {{ end }}
+          {{ template "tutorialbuttons" . }}
+        </div>
+      </div>
+    {{ end }}
+  </body>
+    <script>
+        document.getElementById('publishFileForm').addEventListener('submit', function(event) {
+            let disabled = '{{ .Status.DeployButton }}';
+            if (disabled === 'disabled') {
+                event.preventDefault();
+                return;
+            }
+        });
+    </script>
+</html>

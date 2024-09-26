@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    {{ template "head" . }}
+
+
+    <title>Open a file</title>
+    <style>
+      form {
+        max-width: 800px;
+        width: 100%;
+      }
+
+      .info-detail {
+        display: flex;
+        padding: 15px;
+        padding-left: 30px;
+        /* Space between each detail line */
+      }
+
+      .info-detail label {
+        font-weight: bold;
+        margin-left: 10px;
+        margin-right: 5px;
+        /* Space between label and value */
+        /* Bold font for labels */
+      }
+
+      .add-margin-top {
+        margin-top: 30px;
+      }
+      .add-padding-left {
+        padding-left: 60px;
+      }
+
+      .add-padding-right {
+        padding-right: 30px;
+      }
+
+      .fill {
+        flex-grow: 1;
+      }
+    </style>
+  </head>
+
+  <body>
+    {{ template "bodyheader" . }}
+
+
+    <form id="openFileForm" method="post" action="read-file">
+      <div class="white-frame">
+        <h2>Create a new config file...</h2>
+      </div>
+
+      <div class="white-frame">
+        <h2>from Deployed</h2>
+        <div class="info-detail">
+          <input
+            type="radio"
+            id="{{ (index .FileInfo 0).Filename }}"
+            name="file"
+            value="{{ (index .FileInfo 0).Filename }}"
+            {{ if (index .FileInfo 0).Match }}disabled{{ end }}
+          />
+          <label for="{{ (index .FileInfo 0).Filename }}">File:</label>
+          <span class="fill code-values"
+            >{{ (index .FileInfo 0).Filename }}</span
+          >
+          {{ if ne (index .FileInfo 0).Comment "" }}
+            {{ if eq (index .FileInfo 0).Comment "current" }}
+              <span class="add-padding-right status-text valid">
+                <<- matches current</span
+              >
+            {{ else }}
+              <span class="add-padding-right status-text error">
+                <<- checksum N/A</span
+              >
+            {{ end }}
+          {{ end }}
+        </div>
+        <h2>from Template</h2>
+        <div class="info-detail">
+          <input
+            type="radio"
+            id="{{ (index .FileInfo 1).Filename }}"
+            name="file"
+            value="{{ (index .FileInfo 1).Filename }}"
+            {{ if (index .FileInfo 1).Match }}disabled{{ end }}
+          />
+          <label for="{{ (index .FileInfo 1).Filename }}">File:</label>
+          <span class="fill code-values"
+            >{{ (index .FileInfo 1).Filename }}</span
+          >
+          {{ if ne (index .FileInfo 1).Comment "" }}
+            {{ if eq (index .FileInfo 1).Comment "current" }}
+              <span class="add-padding-right status-text valid">
+                <<- matches current</span
+              >
+            {{ else }}
+              <span class="add-padding-right status-text error">
+                <<- checksum N/A</span
+              >
+            {{ end }}
+          {{ end }}
+        </div>
+        {{ if eq $.Flag.HasArchive true }}
+          <h2>from Archive</h2>
+          {{ range $index,$file := .FileInfo }}
+            {{ if ge $index 2 }}
+              <div class="info-detail">
+                <input
+                  type="radio"
+                  id="{{ $file.Filename }}"
+                  name="file"
+                  value="{{ $file.Filename }}"
+                  {{ if $file.Match }}disabled{{ end }}
+                />
+                <label for="{{ $file.Filename }}">File:</label>
+                <span class="fill code-values">{{ $file.Filename }}</span>
+                {{ if ne $file.Comment "" }}
+                  {{ if eq $file.Comment "current" }}
+                    <span class="add-padding-right status-text valid">
+                      <<- matches current</span
+                    >
+                  {{ else }}
+                    <span class="add-padding-right status-text error">
+                      <<- checksum N/A</span
+                    >
+                  {{ end }}
+                {{ end }}
+              </div>
+            {{ end }}
+          {{ end }}
+        {{ end }}
+        <div class="space-between-group add-margin-top">
+          <button
+            type="button"
+            class="standard-button"
+            onclick="window.location.href='{{ .Redirect }}';"
+          >
+            Exit
+          </button>
+          <button
+            type="button"
+            class="standard-button validate"
+            onclick="window.location.href='{{ .Source }}';"
+          >
+            Reload
+          </button>
+          <button
+            type="submit"
+            id="submit-button"
+            class="standard-button disabled"
+            disabled
+          >
+            Open
+          </button>
+        </div>
+      </div>
+    </form>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        var form = document.getElementById("openFileForm");
+        var button = document.getElementById("submit-button");
+
+        form.addEventListener("change", function (event) {
+          if (event.target.name === "file") {
+            button.disabled = false; // Enable the button when any radio is selected
+            button.className = "standard-button edit"; // Change class to 'active-class'
+          }
+        });
+      });
+
+      document.getElementById('openFileForm').addEventListener('submit', function(event) {
+        var isArchived = '{{ .Flag.IsArchived }}' === 'true';
+
+        if (!isArchived) {
+          var confirmLeave = confirm("Do you want to archive the working file before proceeding?");
+          if (confirmLeave) {
+              // Prevent the form from submitting
+              event.preventDefault();
+              window.location.href = "archive-workingfile?redirect={{ .Source }}";
+          }
+        }
+      });
+    </script>
+  </body>
+</html>

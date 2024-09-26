@@ -1,0 +1,420 @@
+{{ define "routersform" }}
+  <form id="routerListForm" method="post" action="allrouters-submit">
+    <div class="white-frame">
+      <h2>
+        {{ .Headline }} -
+        {{/* Code for colored status message next to headline -> */}}
+        {{ if eq .ErrorMsg "valid" }}
+          <span id="form-status" class="status-text valid">valid</span>
+        {{ else }}
+          <span id="form-status" class="status-text error">
+            <span class="tooltip"
+              >{{ .ErrorMsg }}
+              <span class="tooltiptext"
+                >{{ .ErrorMsgTooltipText }}
+              </span>
+            </span>
+          </span>
+        {{ end }}
+      </h2>
+    </div>
+
+    <div class="white-frame">
+      <div class="centered-group">
+        {{ if or (eq $.Tutorial.ID "104") (eq $.Tutorial.ID "202") }}
+          <div class="tooltip tutorial-highlighted">
+            <button
+              type="button"
+              class="character-button"
+              name="action"
+              value="new"
+              onclick="window.location.href='routers-new?tutorial={{ $.Tutorial.NextID }}';"
+            >
+              +
+            </button>
+            <span class="tooltiptext">New Router</span>
+          </div>
+        {{ else }}
+          <div class="tooltip">
+            <button
+              type="button"
+              class="character-button"
+              name="action"
+              value="new"
+              onclick="window.location.href='routers-new';"
+            >
+              +
+            </button>
+            <span class="tooltiptext">New Router</span>
+          </div>
+        {{ end }}
+      </div>
+    </div>
+
+    {{ range $index, $router := .Objects }}
+      {{ if eq $router.Type 4 }}
+        {{/* Create a white-frame for each headline */}}
+        <div class="white-frame">
+          {{ if eq $.Tutorial.ID "102" }}
+            <h2>
+              <div class="tutorial-highlighted">{{ $router.Headline }}</div>
+            </h2>
+          {{ else }}
+            <h2>{{ $router.Headline }}</h2>
+          {{ end }}
+          <div class="input-group url-endpoint-list-group">
+            <h3>routers</h3>
+
+            {{ $currentTitle := $router.Headline }}
+            {{ range $subIndex, $subRouter := $.Objects }}
+              {{ if eq $subRouter.Type 4 }}
+                {{ $currentTitle = $subRouter.Headline }}
+              {{ else if eq $subRouter.Type 5 }}
+                {{ if eq $currentTitle $router.Headline }}
+                  {{/* Only include routers that are withing the same headline */}}
+                  <div class="form-container">
+                    <div class="form-row">
+                      {{ if eq $.Tutorial.ID "103" }}
+                        <div class="input-group tutorial-highlighted">
+                          <input
+                            class="code-values"
+                            type="text"
+                            name="{{ $subRouter.Key }}"
+                            placeholder="/example/path/"
+                            value="{{ $subRouter.Headline }}"
+                            data-status-target="text-status-{{ $subIndex }}"
+                          />
+                        </div>
+                      {{ else }}
+                        <div class="input-group">
+                          <input
+                            class="code-values"
+                            type="text"
+                            name="{{ $subRouter.Key }}"
+                            placeholder="/example/path/"
+                            value="{{ $subRouter.Headline }}"
+                            data-status-target="text-status-{{ $subIndex }}"
+                          />
+                        </div>
+                      {{ end }}
+                      <div class="space-between-group">
+                        {{ if or (eq $.Tutorial.ID "105") (eq $.Tutorial.ID "203") }}
+                          {{ if eq $subIndex 1 }}
+                            <div class="tooltip tutorial-highlighted">
+                              <button
+                                type="button"
+                                name="edit"
+                                value="{{ $subRouter.Key }}"
+                                class="character-button blue"
+                                onclick="window.location.href='routers-form?key={{ $subRouter.Key }}&tutorial={{ $.Tutorial.NextID }}';"
+                              >
+                                ✎
+                              </button>
+                              <span class="tooltiptext">Edit Router</span>
+                            </div>
+                          {{ else }}
+                            <div class="tooltip">
+                              <button
+                                type="button"
+                                name="edit"
+                                value="{{ $subRouter.Key }}"
+                                class="character-button blue"
+                                onclick="window.location.href='routers-form?key={{ $subRouter.Key }}';"
+                              >
+                                ✎
+                              </button>
+                              <span class="tooltiptext">Edit Router</span>
+                            </div>
+                          {{ end }}
+                        {{ else if (and (eq $.Tutorial.ID "502") (eq $subRouter.Fields.ErrorMsg "valid")) }}
+                          <div class="tooltip tutorial-highlighted">
+                            <button
+                              type="button"
+                              name="edit"
+                              value="{{ $subRouter.Key }}"
+                              class="character-button blue"
+                              onclick="window.location.href='routers-form?key={{ $subRouter.Key }}&tutorial={{ $.Tutorial.NextID }}';"
+                            >
+                              ✎
+                            </button>
+                            <span class="tooltiptext">Edit Router</span>
+                          </div>
+                        {{ else }}
+                          <div class="tooltip">
+                            <button
+                              type="button"
+                              name="edit"
+                              value="{{ $subRouter.Key }}"
+                              class="character-button blue"
+                              onclick="window.location.href='routers-form?key={{ $subRouter.Key }}';"
+                            >
+                              ✎
+                            </button>
+                            <span class="tooltiptext">Edit Router</span>
+                          </div>
+                        {{ end }}
+                        <div class="tooltip">
+                          <button
+                            type="button"
+                            name="copy"
+                            value="{{ $subRouter.Key }}"
+                            class="character-button"
+                            onclick="window.location.href='routers-copy?key={{ $subRouter.Key }}';"
+                          >
+                            +
+                          </button>
+                          <span class="tooltiptext">Copy Router</span>
+                        </div>
+                        <div class="tooltip">
+                          <button
+                            type="button"
+                            name="delete"
+                            id="deleteButton"
+                            value="{{ $subRouter.Key }}"
+                            class="character-button red"
+                            data-key="{{ $subRouter.Key }}"
+                          >
+                            -
+                          </button>
+                          <span class="tooltiptext">Delete Router</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="form-row">
+                      <div class="input-group">
+                        {{ if eq $subRouter.Fields.ErrorMsg "valid" }}
+                          <span
+                            id="text-status-{{ $subIndex }}"
+                            class="status-mini-block-right status-text valid"
+                            >valid</span
+                          >
+                        {{ else }}
+                          <span
+                            id="text-status-{{ $subIndex }}"
+                            class="status-mini-block-right status-text error"
+                            ><span class="tooltip"
+                              >{{ $subRouter.Fields.ErrorMsg }}<span
+                                class="tooltiptext"
+                                >{{ $subRouter.Fields.ErrorMsgTooltipText }}</span
+                              ></span
+                            ></span
+                          >
+                        {{ end }}
+                        <!-- Status text element -->
+                      </div>
+                      <div class="space-between-group"></div>
+                    </div>
+                  </div>
+                {{ end }}
+              {{ end }}
+            {{ end }}
+          </div>
+        </div>
+      {{ end }}
+    {{ end }}
+
+
+    <div class="white-frame">
+      <div class="space-between-group">
+        <div>
+          <button type="button" class="standard-button" id="cancelButton">
+            Cancel
+          </button>
+        </div>
+        <div>
+          <button
+            type="submit"
+            name="redirect"
+            value="routers"
+            class="standard-button validate"
+          >
+            Save & Validate
+          </button>
+        </div>
+        <div>
+          <button
+            type="submit"
+            name="redirect"
+            value="menu"
+            class="standard-button edit"
+          >
+            Save & Exit
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
+{{ end }}
+
+
+<!doctype html>
+<html lang="en">
+  <head>
+    {{ template "head" . }}
+
+
+    <title>{{ .Headline }}</title>
+    <style>
+      form {
+        max-width: 800px;
+        width: 100%;
+      }
+
+      .form-container {
+        margin-bottom: 20px;
+        margin-left: 10px;
+      }
+
+      .form-row {
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .input-group {
+        flex: 7;
+        /* Makes input groups flexible in size and equal in width */
+      }
+
+      .input-group input,
+      .input-group textarea {
+        width: 100%;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+        box-sizing: border-box;
+        font-size: 16px;
+        /* Example font size */
+        /* Added for consistency in box sizing */
+      }
+
+      .centered-text {
+        text-align: center;
+      }
+
+      .status-mini-block-right {
+        display: block;
+        text-align: right;
+        font-size: 0.8em;
+        margin-top: 5px;
+      }
+
+      .tutorial-form {
+        flex: 1;
+        max-width: 400px;
+      }
+
+      .main-form {
+        flex: 3;
+        max-width: 800px;
+      }
+    </style>
+  </head>
+  <body>
+    {{ template "bodyheader" . }}
+
+    {{ if eq .Tutorial.ID "" }}
+      {{ template "routersform" . }}
+    {{ else }}
+      <div class="tutorial-container">
+        <div class="main-form">
+          {{ template "routersform" . }}
+        </div>
+        <div class="yellow-frame tutorial-form">
+          {{ if eq .Tutorial.ID "102" }}
+            {{ template "102" . }}
+          {{ else if eq .Tutorial.ID "103" }}
+            {{ template "103" . }}
+          {{ else if eq .Tutorial.ID "104" }}
+            {{ template "104" . }}
+          {{ else if eq .Tutorial.ID "105" }}
+            {{ template "105" . }}
+          {{ else if eq .Tutorial.ID "101" }}
+            {{ template "101" . }}
+          {{ else if eq .Tutorial.ID "201" }}
+            {{ template "201" . }}
+          {{ else if eq .Tutorial.ID "202" }}
+            {{ template "202" . }}
+          {{ else if eq .Tutorial.ID "203" }}
+            {{ template "203" . }}
+          {{ else if eq .Tutorial.ID "502" }}
+            {{ template "502" . }}
+          {{ end }}
+          {{ template "tutorialbuttons" . }}
+        </div>
+      </div>
+    {{ end }}
+
+
+    <script>
+      let edited = false;
+
+      document
+        .getElementById("routerListForm")
+        .addEventListener("input", function (event) {
+          // Ensure the event is coming from an input element
+          if (event.target.tagName.toLowerCase() === "input") {
+            const input = event.target;
+
+            // Use a data attribute to find the associated status span
+            const statusSpanId = input.getAttribute("data-status-target");
+            const statusSpan = document.getElementById(statusSpanId);
+
+            // Update the status based on input content
+            if (input.value === "") {
+              statusSpan.textContent = "empty";
+              statusSpan.className =
+                "status-mini-block-right status-text empty"; // Apply error styling for empty input
+            } else {
+              statusSpan.textContent = "to be validated";
+              statusSpan.className = "status-mini-block-right status-text"; // Default styling
+            }
+
+            const formSpan = document.getElementById("form-status");
+            formSpan.textContent = "to be validated";
+            formSpan.className = "status-text empty"; // Default styling
+
+            edited = true;
+          }
+        });
+
+      document
+        .getElementById("routerListForm")
+        .addEventListener("click", function (event) {
+          var target = event.target; // Get the element that was clicked
+
+          // Ensure the clicked element is one of the delete buttons
+          if (
+            target.classList.contains("character-button") &&
+            target.classList.contains("red")
+          ) {
+            var confirmLeave = confirm(
+              "Are you sure you want to delete this router?",
+            );
+            if (confirmLeave) {
+              // If user confirms, construct the URL and redirect
+              key = target.getAttribute("data-key");
+              window.location.href = `routers-delete?key=${key}`;
+            } else {
+              // If user does not confirm, prevent any default action
+              event.preventDefault();
+            }
+          }
+        });
+
+      document
+        .getElementById("cancelButton")
+        .addEventListener("click", function () {
+          if (edited) {
+            var confirmLeave = confirm(
+              "You have unsaved changes. Are you sure you want to leave without saving?",
+            );
+            if (confirmLeave) {
+              window.location.href = "menu";
+            }
+            return;
+          }
+          window.location.href = "menu";
+        });
+    </script>
+  </body>
+</html>

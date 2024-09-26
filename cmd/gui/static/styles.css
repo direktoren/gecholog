@@ -1,0 +1,268 @@
+/* home logo */
+.home-logo {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 1000;
+}
+
+.home-logo img {
+    height: 50px;
+    width: auto;
+}
+
+/* body */
+body {
+    font-family: 'Fira Sans', Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    background-color: #f0f0f0;
+    font-size: 16px;
+    margin-top: 60px;
+    /* Example font size */
+}
+
+h2 {
+    text-align: center;
+    color: #333;
+}
+
+h3 {
+    text-align: center;
+    color: #333;
+    font-size: 20px;
+    margin-top: 0px;
+    margin-bottom: 20px;
+    font-weight: normal;
+}
+
+code {
+    font-family: 'Fira Code', 'Courier New', monospace;
+    color: #6177c1;
+}
+
+.white-frame {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    min-width: 400px;
+    box-sizing: border-box; /* Ensures padding and border are included in the width */
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+
+
+.yellow-frame {
+    background-color: rgba(255, 208, 0, 0.5);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    min-width: 400px;
+    box-sizing: border-box; /* Ensures padding and border are included in the width */
+    width: 100%;
+    margin-bottom: 20px;
+    height: auto;     /* Ensure height adjusts based on content */
+    align-self: flex-start; /* Aligns this element to the start */
+}
+
+/* Button base styles */
+button:not(:disabled):hover {
+    opacity: 0.8;
+}
+
+.standard-button {
+    font-family: 'Fira Sans', 'Fira Code', Arial, sans-serif;
+    background-color: #6c757d;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+    width: 100px;
+    height: 100%;
+    font-size: 16px;
+}
+
+.standard-button.validate {
+    background-color: #17a2b8;
+}
+
+.standard-button.edit {
+    background-color: #007bff;
+}
+
+.standard-button.disabled {
+    background-color: #ccc; /* Adjusted for clarity and correctness */
+    color: #666;
+    border: 1px solid #999;
+    cursor: not-allowed;
+    opacity: 0.8;
+}
+
+.standard-button.tutorial {
+    background-color: #ded0a8; /* Adjusted for clarity and correctness */
+    color: #5c3207;
+    border: 1px solid #e7d1a5;
+    opacity: 0.8;
+  }
+
+
+.character-button {
+    font-family: 'Fira Code', Consolas, Monaco, 'Lucida Console', 'Courier New', monospace;
+    background-color: #28a745;
+    color: white;
+    font-size: 20px;
+    line-height: 20px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.character-button.red {
+    background-color: #dc3545;
+}
+
+.character-button.blue {
+    background-color: #007bff;
+}
+
+/* Groups */
+.centered-group {
+    padding: 10px;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.space-between-group {
+    padding: 10px;
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+}
+
+
+/* Typographic styles */
+.code-values {
+    font-family: 'Fira Code', 'Courier New', monospace;
+    color: #555;
+}
+
+.status-text {
+    font-family: 'Fira Sans', Arial, sans-serif;
+    color: black;
+}
+
+.status-text.valid {
+    color: green;
+}
+
+.status-text.empty {
+    color: rgb(157, 186, 197);
+
+}
+
+.status-text.error {
+    color: red;
+}
+
+input::placeholder {
+    color: #d8d4d4; /* Sets the color of the placeholder text */
+    font-style: italic; /* Makes the placeholder text italic */
+}
+
+.top-right {
+    position: fixed; /* Fixed positioning relative to the viewport */
+    top: 10px; /* 10 pixels from the top */
+    right: 10px; /* 10 pixels from the right */
+    z-index: 1000; /* Ensures it stays on top of other content */
+}
+
+.logout-link {
+    font-size: 16px;
+    text-decoration: none; /* No underline */
+}
+
+/* Tooltip */
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+  }
+
+  .tooltip .tooltiptext {
+    visibility: hidden;
+    max-width: 600px;
+    white-space: nowrap;
+    background-color: black;
+    color: white;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 5px;
+
+    font-family: 'Fira Sans', Arial, sans-serif;
+    font-weight: normal;
+    font-size: 16px;
+
+    /* Positioning */
+    position: absolute;
+    z-index: 1;
+    top: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .tooltip.right .tooltiptext {
+  }
+
+  .tooltip:hover .tooltiptext {
+    visibility: visible;
+  }
+
+  .tutorial-container {
+    display: flex;
+    justify-content: center;
+    gap: 60px;
+    width: 80%;
+  }
+
+  .tutorial-highlighted {
+    position: relative;
+    display: inline-block;
+  }
+
+  .tutorial-highlighted::before {
+    content: "";
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    width: calc(100% + 20px);
+    height: calc(100% + 20px);
+    z-index: 0;
+    border-radius: 10px; /* Adjust border-radius to match the shape */
+    pointer-events: none;
+    background-color: rgba(255, 208, 0, 0.5);
+    animation: pulsate 1.5s infinite;
+  }
+
+  @keyframes pulsate {
+    0% {
+      background-color: rgba(255, 208, 0, 0.5);
+    }
+    50% {
+      background-color: rgba(255, 208, 0, 0.05);
+    }
+    100% {
+      background-color: rgba(255, 208, 0, 0.5);
+    }
+  }

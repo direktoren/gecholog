@@ -1,0 +1,64 @@
+{
+   "version": "1.0.1",
+   "log_level": "INFO",
+   "secret": "${GUI_SECRET}",
+   "failed_authentication_limit": 5,
+   "tls": {
+      "ingress": {
+         "enabled": false,
+         "certificate_file": "",
+         "private_key_file": ""
+      }
+   },
+   "gui_port": 8080,
+   "working_directory": "app/working/",
+   "archive_directory": "app/archive/",
+   "service_bus": {
+      "hostname": "localhost:4222",
+      "topic_exact_logger": "coburn.gl.logger",
+      "token": "${NATS_TOKEN}"
+   },
+   "gl": {
+      "name": "gl",
+      "production_file": "app/conf/gl_config.json",
+      "production_checksum_file": "app/checksum/.gl_config.sha256",
+      "template_file": "app/default-conf/gl_config.json",
+      "validation_executable": "./gl",
+      "config_command": "-o",
+      "validate_command": "--validate",
+      "additional_arguments": []
+   },
+   "nats2log": {
+      "name": "nats2log",
+      "production_file": "app/conf/nats2log_config.json",
+      "production_checksum_file": "app/checksum/.nats2log_config.sha256",
+      "template_file": "app/default-conf/nats2log_config.json",
+      "validation_executable": "./nats2log",
+      "config_command": "-o",
+      "validate_command": "--validate",
+      "additional_arguments": []
+   },
+   "nats2file": {
+      "name": "nats2file",
+      "production_file": "app/conf/nats2file_config.json",
+      "production_checksum_file": "app/checksum/.nats2file_config.sha256",
+      "template_file": "app/default-conf/nats2file_config.json",
+      "validation_executable": "./nats2log",
+      "config_command": "-o",
+      "validate_command": "--validate",
+      "additional_arguments": [
+         "-a",
+         "nats2file"
+      ]
+   },
+   "tokencounter": {
+      "name": "tokencounter",
+      "production_file": "app/conf/tokencounter_config.json",
+      "production_checksum_file": "app/checksum/.tokencounter_config.sha256",
+      "template_file": "app/default-conf/tokencounter_config.json",
+      "validation_executable": "./tokencounter",
+      "config_command": "-o",
+      "validate_command": "--validate",
+      "additional_arguments": []
+   }
+}

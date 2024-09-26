@@ -1,0 +1,717 @@
+{{ define "tutorialbuttons" }}
+  {{ if and (eq .Tutorial.PreviousButton "") (eq .Tutorial.NextButton "") }}
+    <div class="centered-group">
+      <button
+        type="button"
+        class="standard-button tutorial"
+        onclick="window.location.href='../mainmenu';"
+      >
+        Stop
+      </button>
+    </div>
+  {{ else }}
+    <div class="space-between-group">
+      <button
+        type="button"
+        class="standard-button tutorial"
+        onclick="window.location.href='../mainmenu';"
+      >
+        Stop
+      </button>
+      {{ if ne .Tutorial.PreviousButton "" }}
+        <button
+          type="button"
+          class="standard-button  tutorial"
+          onclick="(function() { let url = new window.URL(window.location.href); url.searchParams.set('tutorial', '{{ .Tutorial.PreviousButton }}'); window.location.href = url.toString(); })();"
+        >
+          Previous
+        </button>
+      {{ end }}
+
+      {{ if ne .Tutorial.NextButton "" }}
+        <button
+          type="button"
+          class="standard-button tutorial"
+          onclick="(function() { let url = new window.URL(window.location.href); url.searchParams.set('tutorial', '{{ .Tutorial.NextButton }}'); window.location.href = url.toString(); })();"
+        >
+          Next
+        </button>
+      {{ end }}
+    </div>
+  {{ end }}
+{{ end }}
+
+{{ define "101" }}
+  <h2>Tutorial - New Router</h2>
+  <h3>Step 1: Introduction</h3>
+  <p>
+    This tutorial will guide you through the process of creating a basic router.
+  </p>
+  <p>
+    We will highlight information that is important or the action you need to
+    take to proceed. You can stop the tutorial at any time by pressing the
+    "Stop" button. When the tutorial is displaying informational steps only, the
+    button "Next" takes you to the next step. Otherwise you need to take the
+    action shown to proceed. Let's get started!
+  </p>
+  <p>
+    This page "Routers" presents an overview of the existing routers. We will
+    start the tutorials here.
+  </p>
+{{ end }}
+
+{{ define "102" }}
+  <h2>Tutorial - New Router</h2>
+  <h3>Step 2: Base URL</h3>
+  <p>
+    An LLM API is normally defined by a Base URL and one or more endpoints. To
+    allow the requestor to select endpoints it is common to specify only the
+    Base URL in the router. You can set the Base URL of a router to any URL or
+    an environment variable that contains a URL. Example:
+  </p>
+  <p>
+    <code>${AISERVICE_API_BASE}</code> <br />
+    <code>https://your.openai.azure.com</code>.
+  </p>
+  <p>
+    The routers on this paged are grouped together after the Base URL. This
+    allows you to view all routers that direct traffic to the same LLM API.
+  </p>
+{{ end }}
+
+{{ define "103" }}
+  <h2>Tutorial - New Router</h2>
+  <h3>Step 3: Ingress Router Path</h3>
+  <p>
+    Each router is defined by a unique path. This is the path that the router
+    will listen to and the one you will use when making a request via
+    Gecholog.ai
+  </p>
+  <p>
+    A router path is a string that starts and ends with a forward slash like
+    this <code>/example/path/</code>
+  </p>
+{{ end }}
+
+{{ define "104" }}
+  <h2>Tutorial - New Router</h2>
+  <h3>Step 4: Create a new Router</h3>
+  <p>
+    Now let's create a new router from scratch. It's very easy. Just click on
+    the "+" button in on the top to start the process.
+  </p>
+  <p>
+    You can also edit, copy or delete an existing router. But for now, we will
+    create an empty router.
+  </p>
+{{ end }}
+
+{{ define "105" }}
+  <h2>Tutorial - New Router</h2>
+  <h3>Step 5: Edit the Router</h3>
+  <p>
+    A new blank router has been created. You can now edit the router by clicking
+    on the "Edit" button.
+  </p>
+  <p>In the next step you will add the details to your new router.</p>
+{{ end }}
+
+{{ define "106" }}
+  <h2>Tutorial - New Router</h2>
+  <h3>Step 6: Set Ingress Path</h3>
+  <p>
+    The first thing you need to do is to set the Ingress Path. Ingress path is
+    the Gecholog.ai endpoint that defines how to send traffic TO the router.
+  </p>
+  <p>
+    A router path is a string that starts and ends with a forward slash like
+    this:.
+  </p>
+  <p>
+    <code>/example/path/</code> <br />
+    <code>/onepath/</code> <br />
+    <code>/you/can/have/multiple/paths/</code> <br />
+  </p>
+  <p>
+    When you are done, click on the "Save & Validate" button to save & validate
+    your path.
+  </p>
+{{ end }}
+
+{{ define "107" }}
+  <h2>Tutorial - New Router</h2>
+  <h3>Step 7: Set Outbound URL</h3>
+  <p>
+    Next thing you need to do is to set the Outbound URL. This is the Base URL
+    for your LLM API service.
+  </p>
+  <p>
+    You can leave the endpoint empty, but you can also URL for hostname and
+    endpoint for the endpoint and query parameters.
+  </p>
+
+  <p>
+    Gecholog.ai UI will only validate the URL format. It will not check if the
+    URL is accessible or if the service is running. Examples:
+  </p>
+  <p>
+    <code>https://your.openai.azure.com/</code> <br />
+    <code>http://localhost/</code> <br />
+    <code>http://10.0.1.1/</code> <br />
+    <code>${CONTAINER_ENV_VAR}</code> <br />
+  </p>
+  <p>
+    When you are done, click on the "Save & Validate" button to save & validate
+    your Outbound URL.
+  </p>
+{{ end }}
+
+{{ define "108" }}
+  <h2>Tutorial - New Router</h2>
+  <h3>Step 8: Finalize</h3>
+  <p>
+    All the steps are completed for a basic router that will accept traffic on
+    the Ingress Path of your choice and forward it to the Outbound URL (the LLM
+    API Base URL of your choice).
+  </p>
+  <p>
+    Make sure the router is <code>valid</code>. If not, you can hover over the
+    validation errors to get clues how to fix it. If you have changed something,
+    press "Save & Validate" to update the validation information.
+  </p>
+  <p>
+    Your router is now ready to be used. BUT you have to deploy your changes
+    before they take effect. Follow this link for <br />
+    <a href="menu?tutorial=401">Tutorial - Deploy Configuration</a>.
+  </p>
+{{ end }}
+
+{{ define "201" }}
+  <h2>Tutorial - Advanced Router Setup</h2>
+  <h3>Step 1: Introduction</h3>
+  <p>
+    This tutorial will guide you through the process of creating a router which
+    (1) acts as an API Key Proxy and (2) rejects requests that doesn't have a
+    specific header.
+  </p>
+  <p>
+    It is recommended that you are already familiar and have explored the
+    tutorial <br />
+    <a href="routers?tutorial=101">Tutorial - New Router</a>.
+  </p>
+{{ end }}
+
+{{ define "202" }}
+  <h2>Tutorial - Advanced Router Setup</h2>
+  <h3>Step 2: Create a new Router</h3>
+  <p>
+    Now let's create a new router from scratch. It's very easy. Just click on
+    the "+" button in on the top to start the process.
+  </p>
+  <p>
+    For the future, in this page "Routers", you can also edit, copy or delete an
+    existing router. But for now, we will create an empty router.
+  </p>
+{{ end }}
+
+{{ define "203" }}
+  <h2>Tutorial - Advanced Router Setup</h2>
+  <h3>Step 3: Edit the Router</h3>
+  <p>
+    A new blank router has been created. You can now edit the router by clicking
+    on the "Edit" button.
+  </p>
+  <p>In the next step you will add the details to your new router.</p>
+{{ end }}
+
+{{ define "204" }}
+  <h2>Tutorial - Advanced Router Setup</h2>
+  <h3>Step 4: Set Ingress Path and Base URL</h3>
+  <p>
+    From the "New Router" tutorial we showed that a router path is a string that
+    needs to start and end with a forward slash like this:.
+  </p>
+  <p>
+    <code>/example/path/</code> <br />
+    <code>/onepath/</code> <br />
+    <code>/you/can/have/multiple/paths/</code> <br />
+  </p>
+  <p>Example of Base URL for the LLM API service:</p>
+  <p>
+    <code>https://your.openai.azure.com/</code> <br />
+    <code>http://localhost/</code> <br />
+    <code>http://10.0.1.1/</code> <br />
+    <code>${CONTAINER_ENV_VAR}</code> <br />
+  </p>
+  <p>When you are done, click on the "Save & Validate" button.</p>
+{{ end }}
+
+{{ define "205" }}
+  <h2>Tutorial - Advanced Router Setup</h2>
+  <h3>Step 5: Ingress API Key</h3>
+  <p>
+    Let's now setup an API key translation. API key translation is when we hide
+    the real API key of the LLM service to the requestor and instead distribute
+    an API key we have created ourselves.
+  </p>
+  <p>Click on the "Add" button in the Ingress Header section. Then add:</p>
+  <table>
+    <tr>
+      <td><code>Api-Key</code></td>
+      <td><code>MyApiKey</code></td>
+    </tr>
+  </table>
+  <p>
+    The header fields also support environment variables. You can use any
+    environment variable value that is available in the scope of the gecholog
+    container. For example:
+  </p>
+  <p>
+    <code>${GECHOLOG_API_KEY}</code> <br />
+    <code>${CONTAINER_ENV_VAR}</code> <br />
+  </p>
+  <p>
+    If the environment variable is not available, the value will be empty. And
+    if Gecholog.ai doesn't accept an empty value, the validation will indicate
+    that.
+  </p>
+  <p>When you are done, click on the "Save & Validate" button.</p>
+{{ end }}
+
+{{ define "206" }}
+  <h2>Tutorial - Advanced Router Setup</h2>
+  <h3>Step 6: Outbound API Key</h3>
+  <p>
+    Now we need to add the Api-Key for the LLM Service, this key will be hidden
+    from the requestor.
+  </p>
+  <p>Click on the "Add" button in the Outbound Header section. Then add:</p>
+  <table>
+    <tr>
+      <td><code>Api-Key</code></td>
+      <td><code>LLMServiceApiKey</code></td>
+    </tr>
+  </table>
+  <p>
+    An important side note: Gecholog.ai will mask the value of certain headers
+    in the logs. This is to protect sensitive information from being exposed.
+    For more information about what headers are masked, please look at the
+    <a href="settings-form">Settings - Masked Headers</a>.
+  </p>
+  <p>When you are done, click on the "Save & Validate" button.</p>
+{{ end }}
+
+{{ define "207" }}
+  <h2>Tutorial - Advanced Router Setup</h2>
+  <h3>Step 7: Confirm the settings are valid</h3>
+  <p>
+    Check that the settings are valid. If not, you can hover over the validation
+    errors to figure out what is wrong. Correct the messages and press "Save &
+    Validate" until the Router settings are valid.
+  </p>
+  <p>Click "Next" to learn how to add a Mandatory Header Requirement.</p>
+{{ end }}
+
+{{ define "208" }}
+  <h2>Tutorial - Advanced Router Setup</h2>
+  <h3>Step 8: Add Mandatory Header</h3>
+  <p>
+    One way to track different consumers of the same LLM API is to require a
+    mandatory header in the request that helps identify the consumer. A
+    mandatory header makes log filter easy. This step will show you how to add a
+    mandatory header requirement.
+  </p>
+  <p>Click on the "Add" button in the Ingress Header section. Then add:</p>
+  <table>
+    <tr>
+      <td><code>Your-Header</code></td>
+      <td><code>regex:.+</code></td>
+    </tr>
+  </table>
+  <p>
+    The header name can be any valid header name, but make sure it is unique.
+    The value has to be "regex:.+". This means that any non-empty value will be
+    accepted.
+  </p>
+  <p>When you are done, click on the "Save & Validate" button.</p>
+{{ end }}
+
+{{ define "209" }}
+  <h2>Tutorial - Advanced Router Setup</h2>
+  <h3>Step 9: Finalize</h3>
+  <p>
+    All the steps are completed for a router with API Key Translation and
+    Mandatory Header Requirement.
+  </p>
+  <p>
+    Make sure the router is <code>valid</code>. If not, you can hover over the
+    validation errors to get clues how to fix it. If you have changed something,
+    press "Save & Validate" to update the validation information.
+  </p>
+  <p>
+    Your router is now ready to be used. BUT you have to deploy your changes
+    before they take effect. Follow this link for <br />
+    <a href="menu?tutorial=401">Tutorial - Deploy Configuration</a>.
+  </p>
+{{ end }}
+
+{{ define "301" }}
+  <h2>Tutorial - Activate Logging</h2>
+  <h3>Step 1: Introduction</h3>
+  <p>
+    This tutorial will guide you through the process activating logging for the
+    Gecholog.ai LLM Gateway.
+  </p>
+  <p>
+    The logs are written to the <code>/app/log/gecholog.jsonl</code> file of the
+    Gechologi.ai container which can be accessed for example by mounting a
+    volume to the <code>/app/log</code> directory at startup, or via Docker
+    Desktop or Docker CLI if you are running Gecholog.ai on Docker.
+  </p>
+  <p>
+    The logs are written in JSONL format and can be used for monitoring and
+    debugging purposes.
+  </p>
+  <p>
+    This first page of the tutorial is the main page of the service
+    <code>nats2file</code> which is responsible for writing the logs to a file.
+  </p>
+  <p>Click on the "Service Bus Config" settings to continue.</p>
+{{ end }}
+
+{{ define "302" }}
+  <h2>Tutorial - Activate Logging</h2>
+  <h3>Step 2: Set Logger Topic</h3>
+  <p>Set the value to:</p>
+  <p>
+    <code>coburn.gl.logger</code>
+  </p>
+  <p>
+    The logging service <code>nats2file</code> listens to the topic "Topic Exact
+    Logger" and writes the logs to a file.
+  </p>
+  <p>
+    If the field "Topic Exact Logger" topic is set to a mute topic, the service
+    is disabled. A mute topic might still be <code>valid</code>.
+  </p>
+  <p>
+    If the Gecholog.ai container has the environment variable
+    <code>${NATS2FILE_LOGGER_SUBTOPIC}</code> set to <code>.logger</code> then
+    logging is also activated in the default settings.
+  </p>
+  <p>When you are done, click on the "Save & Validate" button.</p>
+{{ end }}
+
+{{ define "303" }}
+  <h2>Tutorial - Activate Logging</h2>
+  <h3>Step 3: Validate</h3>
+  <p>
+    Make sure the "Service Bus Config" is <code>valid</code>. If not, you can
+    hover over the validation errors to get clues how to fix it. If you have
+    changed something, press "Save & Validate" to update the validation
+    information.
+  </p>
+  <p>When you are ready to proceed, press "Save & Exit".</p>
+{{ end }}
+
+{{ define "304" }}
+  <h2>Tutorial - Activate Logging</h2>
+  <h3>Step 4: Ready to Deploy</h3>
+  <p>
+    We have updated the configuration file, but we have not yet deployed the
+    changes. Changes can ONLY be deployed if (1) the configuration file we are
+    working on is <code>valid</code> and (2) the file is not already deployed.
+  </p>
+  <p>
+    If both those conditions are met, the "Deploy" button is enabled. If the
+    file is not valid, you have to fix the validation errors first and then
+    restart the tutorial.
+  </p>
+  <p>When you are ready to deploy the changes, press the "Deploy" button.</p>
+{{ end }}
+
+{{ define "305" }}
+  <h2>Tutorial - Activate Logging</h2>
+  <h3>Step 5: The Working File</h3>
+  <p>
+    Deploying your configuration means publishing your current working file to
+    production.
+  </p>
+  <p>
+    Before we deploy let's have a quick look at this view. All the changes you
+    make in the gui are stored in the working file. The working file is not
+    active until you deploy it.
+  </p>
+{{ end }}
+
+{{ define "306" }}
+  <h2>Tutorial - Activate Logging</h2>
+  <h3>Step 6: The Production File</h3>
+  <p>
+    The production file will be overwritten with the working file when you
+    deploy.
+  </p>
+  <p>
+    It's good practice to make sure you have a backup of the current production
+    file. The section "Archived" indicates if you already have a backup of the
+    production file.
+  </p>
+  <p>Hover over the message with the cursor to see where it is.</p>
+  <p>
+    In the case you DON'T have a backup, we recommend you make one and then
+    restart this tutorial. NOTE: Archiving means EXITING this tutorial.
+  </p>
+{{ end }}
+
+{{ define "307" }}
+  <h2>Tutorial - Activate Logging</h2>
+  <h3>Step 7: Deploy</h3>
+  <p>
+    Now let's proceed to deploy the changes. Press the "Deploy" button to
+    publish.
+  </p>
+{{ end }}
+
+{{ define "308" }}
+  <h2>Tutorial - Activate Logging</h2>
+  <h3>Step 8: Verify Deployment</h3>
+  <p>
+    Your configuration is now deployed. It will only take a few seconds for the
+    production checksum to be updated to confirm the deployment is correct.
+  </p>
+  <p>
+    Press the "Reload" button until the production checksum is updated. When
+    completed you can see that all checksums match and that the status of the
+    staged file is "Deployed and in Production".
+  </p>
+  <p>
+    This tutorial is now completed! Logging is now activated and logs will be
+    written to
+    <code>/app/log/gecholog.jsonl</code>.
+  </p>
+{{ end }}
+
+{{ define "309" }}
+  <h2>Tutorial - Deploy Configuration</h2>
+  <h3>Step 6b: Archive Prod File</h3>
+  <p>
+    Type a post-fix name for the archived file. The post-fix will be added to the file name. It has to be unique.
+  </p>
+  <p>
+    Press the "Archive" button when you are done and the production file will be archived and you'll get back to the Deployment Tutorial.
+  </p>
+{{ end }}
+
+{{ define "401" }}
+  <h2>Tutorial - Deploy Configuration</h2>
+  <h3>Step 1: Ready to Deploy?</h3>
+  <p>
+    This Tutorial assumes you have made changes to the configuration, for
+    example by running any of the tutorials:
+  </p>
+  <p>
+    <a href="routers?tutorial=101">Tutorial - New Router</a> <br />
+    <a href="routers?tutorial=201">Tutorial - Advanced Router Setup</a> <br />
+  </p>
+  <p>
+    You have made changes to the configuration, but you have not yet deployed
+    them. Changes can ONLY be deployed if (1) the configuration file we are
+    working on is <code>valid</code> and (2) the file is not already deployed.
+  </p>
+  <p>
+    If both these conditions are met, the "Deploy" button is enabled. If the
+    file is not valid, you have to fix the validation errors first and then
+    restart the tutorial.
+  </p>
+  <p>When you are ready to deploy the changes, press the "Deploy" button.</p>
+{{ end }}
+
+{{ define "402" }}
+  <h2>Tutorial - Deploy Configuration</h2>
+  <h3>Step 2: The Working File</h3>
+  <p>
+    Deploying your configuration means publishing your current working file to
+    production.
+  </p>
+  <p>
+    Before we deploy let's have a quick look at this view. All the changes you
+    make in the UI are stored in the working file. The working file is not
+    active until you deploy it.
+  </p>
+{{ end }}
+
+{{ define "403" }}
+  <h2>Tutorial - Deploy Configuration</h2>
+  <h3>Step 3: The Production File</h3>
+  <p>
+    The production file will be overwritten with the working file when you
+    deploy.
+  </p>
+  <p>
+    It's good practice to make sure you have a backup of the current production
+    file. The section "Archived" indicates if you already have a backup of the
+    production file.
+  </p>
+  <p>Hover over the message with the cursor to see where it is.</p>
+  <p>
+    In the case you DON'T have a backup, we recommend you make one and then
+    restart this tutorial. NOTE: Archiving means EXITING this tutorial.
+  </p>
+{{ end }}
+
+{{ define "404" }}
+  <h2>Tutorial - Deploy Configuration</h2>
+  <h3>Step 4: Deploy</h3>
+  <p>
+    Now let's proceed to deploy the changes. Press the "Deploy" button to
+    publish.
+  </p>
+{{ end }}
+
+{{ define "405" }}
+  <h2>Tutorial - Deploy Configuration</h2>
+  <h3>Step 5: Verify Deployment</h3>
+  <p>
+    Your configuration is now deployed. It will only take a few seconds for the
+    production checksum to be updated to confirm the deployment is correct.
+  </p>
+  <p>
+    Press the "Reload" button until the production checksum is updated. When
+    completed you can see that all checksums match and that the status of the
+    staged file is "Deployed and in Production".
+  </p>
+  <p>
+    This tutorial is now completed! Your changes are now deployed and active.
+  </p>
+{{ end }}
+
+{{ define "406" }}
+  <h2>Tutorial - Deploy Configuration</h2>
+  <h3>Step 3b: Archive Prod File</h3>
+  <p>
+    Type a post-fix name for the archived file. The post-fix will be added to the file name. It has to be unique.
+  </p>
+  <p>
+    Press the "Archive" button when you are done and the production file will be archived and you'll get back to the Deployment Tutorial.
+  </p>
+{{ end }}
+
+{{ define "501" }}
+  <h2>Tutorial - Make a Request</h2>
+  <h3>Step 1: Confirm your settings are deployed</h3>
+  <p>
+    Welcome to the tutorial "Make a Request via Gecholog.ai". This tutorial will
+    guide you through the process of making a test request via one of the many
+    routers configured.
+  </p>
+  <p>
+    First, we need to confirm that the configurations well use are deployed. You
+    can see this by verifying that the Status says: "Deployed and in Production".
+  </p>
+  <p>
+    If the status is instead "Staged", we recommend that you deploy your changes and then
+    restart this tutorial. This guide will help you deploy your changes:
+  </p>
+  <p><a href="menu?tutorial=401">Tutorial - Deploy Configuration</a> <br /></p>
+  <p>When you are ready to continue, click on the "Routers" button.</p>
+{{ end }}
+
+{{ define "502" }}
+  <h2>Tutorial - Make a Request</h2>
+  <h3>Step 2: Select a Router</h3>
+  <p>
+    This page lists all the available routers, and shows what LLM API they are
+    forwarding the traffic to.
+  </p>
+  <p>
+    Select one of the "valid" routers. Invalid or rejected routers will not be
+    live so we cannot use the to test our request.
+  </p>
+{{ end }}
+
+{{ define "503" }}
+  <h2>Tutorial - Make a Request</h2>
+  <h3>Step 3: Outbound Information</h3>
+  <p>
+    Before you make a request, make sure that the outbound information is
+    correctly configured to your LLM API. Gecholog.ai will only verify that the
+    format of the information is correct.
+  </p>
+  <p>
+    If you prefer to make a request without forwarding the request on an LLM
+    API, make sure you select the <code>/echo/</code> router. The
+    <code>/echo/</code> router will as the name suggest just respond back with
+    your payload and headers.
+  </p>
+{{ end }}
+
+{{ define "504" }}
+  <h2>Tutorial - Make a Request</h2>
+  <h3>Step 4: Make the request</h3>
+  <p>
+    Now let's make the request. You can use any programming language that can
+    make REST API calls, but we will provide an example in python.
+  </p>
+  <p>Create a file <code>example.py</code>:</p>
+  <p class="relative">
+    <button class="copybutton" id="copyButton">   
+      <span class="tooltip">
+        <img src="../static/copy.png" alt="Copy" style="width: 18px; height: 18px;"><span class="tooltiptext"
+          >Copy Code Example</span
+        >
+      </span> 
+    </button>
+    <pre><code id="pythoncode">{{- template "pythonrequest" . -}}</code></pre>
+  </p>
+  <script>
+      // JavaScript to handle the copy functionality
+      document.getElementById('copyButton').addEventListener('click', function() {
+          // Select the code content
+          var codeContent = document.getElementById('pythoncode').innerText;
+
+          // Use the Clipboard API to copy text
+          navigator.clipboard.writeText(codeContent).then(function() {
+              alert('Code copied to clipboard!');
+          }).catch(function(error) {
+              console.error('Error copying text: ', error);
+          });
+      });
+  </script>
+  <p>
+    Remember to set environment variables, for example
+    <code>MY_API_KEY</code> before executing <code>python example.py</code>.
+  </p>
+{{ end }}
+
+{{ define "505" }}
+  <h2>Tutorial - Make a Request</h2>
+  <h3>Step 5: The Response</h3>
+  <p>
+    If the request is successful, a response from Azure OpenAI
+    might look something like this:
+    <pre><code>{'choices': [{'content_filter_results':  'finish_reason': 'length',
+      'index': 0, 'message': {'content': 'Microsoft was founded by Bill Gates
+      and Paul Allen on April 4, ', 'role': 'assistant'}}], 'created':
+      1720089370, 'id': 'chatcmpl-9hE6srFpsSAe7u9XYvUKjerbZjEvI', 'model':
+      'gpt-4', 'object': 'chat.completion', 'prompt_filter_results':
+      [{'prompt_index': 0 }], 'system_fingerprint':
+      'fp_811936bd4f', 'usage': {'completion_tokens': 15, 'prompt_tokens': 29,
+      'total_tokens': 44}}</code></pre>
+  </p>
+  <p>If you used the <code>/echo/</code> router you should instead see:</p>
+  <p>
+    <pre><code>{'messages': [{'role': 'system', 'content': 'Assistant is a large language
+      model trained by OpenAI.'}, {'role': 'user', 'content': 'Who are the
+      founders of Microsoft?'}], 'max_tokens': 15}
+    </code></pre>
+  </p>
+  <p>
+    If you received responses like these, good job! You have successfully made a
+    request via Gecholog.ai.
+  </p>
+  <p>
+    If you didn't receive a 200 and correct response, start be verifying that
+    you have network access to this Gecholog.ai container. The <code>/echo/</code> router is the simplest way to confirm that.
+    And double check the outbound information matches your LLM deployment.
+  </p>
+{{ end }}

@@ -1,0 +1,65 @@
+{
+   "version": "1.0.1",
+   "log_level": "INFO",
+   "max_starts": 2,
+   "services": [
+      {
+         "name": "nats-server",
+         "file": "./nats-server",
+         "config_command": "-c",
+         "configuration_file": "/app/conf/nats-server.conf",
+         "additional_arguments": [],
+         "validate_command": "-t",
+         "healthy_output": "Server is ready",
+         "disable_config_file_monitoring": false,
+         "die_promise": true
+      },
+      {
+         "name": "gl",
+         "file": "./gl",
+         "config_command": "-o",
+         "configuration_file": "/app/conf/gl_config.json",
+         "additional_arguments": [],
+         "validate_command": "--validate",
+         "healthy_output": "http(s) server initialized",
+         "disable_config_file_monitoring": false,
+         "die_promise": true
+      },
+      {
+         "name": "nats2file",
+         "file": "./nats2log",
+         "config_command": "-o",
+         "configuration_file": "/app/conf/nats2file_config.json",
+         "additional_arguments": [
+            "-a",
+            "nats2file"
+         ],
+         "validate_command": "--validate",
+         "healthy_output": "listening for messages",
+         "disable_config_file_monitoring": false,
+         "die_promise": true
+      },
+      {
+         "name": "nats2log",
+         "file": "./nats2log",
+         "config_command": "-o",
+         "configuration_file": "/app/conf/nats2log_config.json",
+         "additional_arguments": [],
+         "validate_command": "--validate",
+         "healthy_output": "listening for messages",
+         "disable_config_file_monitoring": false,
+         "die_promise": false
+      },
+      {
+         "name": "tokencounter",
+         "file": "./tokencounter",
+         "config_command": "-o",
+         "configuration_file": "/app/conf/tokencounter_config.json",
+         "additional_arguments": [],
+         "validate_command": "--validate",
+         "healthy_output": "listening for messages",
+         "disable_config_file_monitoring": false,
+         "die_promise": false
+      }
+   ]
+}

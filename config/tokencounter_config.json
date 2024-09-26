@@ -1,0 +1,65 @@
+{
+   "version": "1.0.1",
+   "log_level": "INFO",
+   "service_bus": {
+      "hostname": "localhost:4222",
+      "topic": "coburn.gl.tokencounter",
+      "token": "${NATS_TOKEN}"
+   },
+   "cap_period_seconds": 120,
+   "token_caps": [
+      {
+         "router": "/service/capped/",
+         "fields": [
+            {
+               "field": "prompt_tokens",
+               "value": 500
+            },
+            {
+               "field": "completion_tokens",
+               "value": 500
+            },
+            {
+               "field": "total_tokens",
+               "value": 100
+            }
+         ]
+      },
+      {
+         "router": "/service/standard/",
+         "fields": [
+            {
+               "field": "prompt_tokens",
+               "value": 0
+            },
+            {
+               "field": "completion_tokens",
+               "value": 0
+            },
+            {
+               "field": "total_tokens",
+               "value": 0
+            }
+         ]
+      }
+   ],
+   "usage_fields": [
+      {
+         "router": "default",
+         "patterns": [
+            {
+               "field": "prompt_tokens",
+               "pattern": "inbound_payload.usage.prompt_tokens"
+            },
+            {
+               "field": "completion_tokens",
+               "pattern": "inbound_payload.usage.completion_tokens"
+            },
+            {
+               "field": "total_tokens",
+               "pattern": "inbound_payload.usage.total_tokens"
+            }
+         ]
+      }
+   ]
+}

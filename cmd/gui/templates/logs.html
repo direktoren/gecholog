@@ -1,0 +1,224 @@
+{{ define  "logsform" }}
+  <form id="fetchLogForm" method="get" action="logs">
+    <div class="empty-frame">
+      <div class="white-frame">
+        <h2>Log Listener</h2>
+      </div>
+    </div>
+
+    <div class="empty-frame fixwidth">
+      <div class="white-frame">
+        <h2>Last 10 Requests</h2>
+        <div>
+          <table>
+            <thead>
+              <tr>
+                <th>TransactionID</th>
+                <th>Router</th>
+                <th>Time</th>
+                <th>Latency (ms)</th>
+                <th>Status Code</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {{ range $index,$transaction :=  .Logs }}
+                <tr>
+                  <td>
+                    <a
+                      href="logs?noreload=true&transactionID={{ $transaction.TransactionID }}"
+                      >{{ $transaction.TransactionID }}</a
+                    >
+                  </td>
+                  <td>{{ $transaction.Router }}</td>
+                  <td>{{ $transaction.Time }}</td>
+                  <td>{{ $transaction.Latency }}</td>
+                  <td>{{ $transaction.StatusCode }}</td>
+                </tr>
+              {{ end }}
+
+            </tbody>
+          </table>
+        </div>
+        <div class="space-between-group add-margin-top">
+          <button
+            type="button"
+            class="standard-button"
+            onclick="window.location.href='mainmenu';"
+          >
+            Exit
+          </button>
+          <button type="submit" class="standard-button validate">Reload</button>
+        </div>
+      </div>
+
+    {{ if ne .Focus "" }}
+        <div class="white-frame">
+          <h2>{{ .FocusID }}</h2>
+          <p class="relative">
+            <button class="copybutton" id="copyButton">   
+              <span class="tooltip">
+                <img src="static/copy.png" alt="Copy" style="width: 18px; height: 18px;"><span class="tooltiptext"
+                  >Copy Log</span
+                >
+              </span> 
+            </button>
+            <pre><code id="log" class="language-json">{{ .Focus }}</code></pre>
+          </p>
+          <script>
+            // JavaScript to handle the copy functionality
+            document.getElementById('copyButton').addEventListener('click', function() {
+                // Select the code content
+                var codeContent = document.getElementById('log').innerText;
+      
+                // Use the Clipboard API to copy text
+                navigator.clipboard.writeText(codeContent).then(function() {
+                    alert('Log copied to clipboard!');
+                }).catch(function(error) {
+                    console.error('Error copying text: ', error);
+                });
+            });
+        </script>
+        </div>
+      </div>
+      <script>hljs.highlightAll();</script>
+    {{ end }}
+  </form>
+{{ end }}
+
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link href="static/styles.css" rel="stylesheet" />
+    <link rel="icon" type="image/x-icon" href="static/favicon.ico" />
+    
+    <script src="static/highlight.min.js"></script>
+
+    <a href="mainmenu" class="home-logo">
+      <img src="static/logo_black_t.png" alt="Logo" />
+    </a>
+    <div class="top-right">
+      <a href="logout" class="logout-link">log out</a>
+    </div>
+
+
+    <title>Log Listener</title>
+    <style>
+      empty-frame {
+        max-width: 800px;
+        width: 100%;
+      }
+
+      .info-detail {
+        padding: 10px;
+        /* Space between each detail line */
+      }
+
+      .add-margin-top {
+        margin-top: 50px;
+      }
+
+      .add-margin-bottom {
+        margin-bottom: 40px;
+      }
+
+      .wide-menu-button {
+        width: 600px;
+        background-color: white;
+        color: black;
+        border: 1px solid black;
+      }
+
+      .tutorial-form {
+        flex: 1;
+        max-width: 400px;
+      }
+
+      .main-form {
+        flex: 3;
+        max-width: 800px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th,
+      td {
+        border: 1px solid #000;
+        padding: 8px;
+        text-align: left;
+        font-family: "Fira Code", "Courier New", monospace;
+      }
+      th {
+        background-color: #f2f2f2;
+      }
+      .fixwidth {
+        min-width: 1000px;
+        max-width: 1000px;
+        width: 100%;
+      }
+      pre {
+        overflow-x: clip;
+        font-family: "Fira Sans", "Courier New", Courier, monospace;
+        line-height: 1.5;
+        white-space: pre-wrap; /* This ensures the text will wrap within the container */
+      }
+      /* Customize JSON key color */
+      .hljs-attr {
+        color: #d35400;
+      }
+
+      /* Customize string color */
+      .hljs-string {
+        color: #27ae60;
+      }
+
+      /* Customize number color */
+      .hljs-number {
+        color: #2980b9;
+      }
+
+      /* Customize boolean and null */
+      .hljs-literal {
+        color: #8e44ad;
+      }
+      .relative {
+        position: relative;
+      }
+      .copybutton {
+        background-color: transparent;
+        border: none;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+        padding: 5px;
+        position: absolute; /* Position absolute within the pre block */
+        right: 15px; /* Position at the right edge */
+        top: 15px; /* Position at the top edge */
+        display: flex;
+        align-items: center;
+      }
+
+      .copybutton:hover {
+        transform: scale(1.1); /* Scale icon on hover for feedback */
+      }
+
+    </style>
+  </head>
+
+  <body>
+    {{ template "logsform" . }}
+  </body>
+  <script></script>
+</html>

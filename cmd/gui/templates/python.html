@@ -1,0 +1,134 @@
+{{- define "importos" -}}
+  {{- /* Find environment variables first */ -}}
+  {{- range $index, $object := .Objects -}}
+    {{- if eq $object.Key "ingress-headers" -}}
+      {{- $x := "\n" -}}
+      {{- $apikeyfound := false -}}
+      {{- range $headerIndex, $header := $object.Fields.Headers -}}
+        {{- if or
+          (eq $header.Header "Api-Key")
+          (eq $header.Header "Authorization")
+        -}}
+          {{- $apikeyfound = true -}}
+        {{- end -}}
+        {{- range $valueIndex, $value := $header.Values -}}
+          {{- $env := (findEndVarInString $value.Value) -}}
+          {{- if ne $env "" -}}
+            {{- $x = printf "%s%s = os.getenv('%s')\n" $x $env $env -}}
+          {{- end -}}
+        {{- end -}}
+      {{- end -}}
+      {{- if not $apikeyfound -}}
+      {{- end -}}
+      {{- if not $apikeyfound -}}
+        {{- $comment := "# Authorization for the LLM endpoint\n" -}}
+        {{- if ne $x "\n" -}}
+          {{- $x = printf "%sMY_API_KEY = os.getenv('MY_API_KEY')\n%s" $comment $x -}}
+        {{- else -}}
+          {{- $x = printf "%sMY_API_KEY = os.getenv('MY_API_KEY')%s" $comment $x -}}
+        {{- end -}}
+      {{- end -}}
+      {{ if ne $x "\n" -}}
+        {{- printf "import os\n\n%s" $x -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+{{- define "requestheaders" -}}
+  {{- $x := "" -}}
+  {{- range $index, $object := .Objects -}}
+    {{- if eq $object.Key "ingress-headers" -}}
+      {{- $y := "" -}}
+      {{- $envcount := 0 -}}
+      {{- $apikeyfound := false -}}
+      {{- range $headerIndex, $header := $object.Fields.Headers -}}
+        {{- if or
+          (eq $header.Header "Api-Key")
+          (eq $header.Header "Authorization")
+        -}}
+          {{- $apikeyfound = true -}}
+        {{- end -}}
+        {{- range $valueIndex, $value := $header.Values -}}
+          {{- $z := $value.Value -}}
+          {{- if eq $value.Value "regex:.+" -}}
+            {{- $z = "any_value" -}}
+          {{- end -}}
+          {{- $env := (findEndVarInString $value.Value) -}}
+          {{- if ne $env "" -}}
+            {{- $envcount = 1 -}}
+            {{- $z = printf "{%s}" $env -}}
+          {{- end -}}
+          {{- if eq $valueIndex 0 -}}
+            {{- $y = printf "%s" $z -}}
+          {{- else -}}
+            {{- $y = printf "%s,%s" $y $z -}}
+          {{- end -}}
+        {{- end -}}
+        {{- $f := "" -}}
+        {{- if ne $envcount 0 -}}
+          {{- $f = printf "f" -}}
+        {{- end -}}
+        {{- if eq $headerIndex 0 -}}
+          {{- $x = printf "%q: %s%q" $header.Header $f $y -}}
+        {{- else -}}
+          {{- $x = printf "%s, %q: %s%q" $x $header.Header $f $y -}}
+        {{- end -}}
+      {{- end -}}
+      {{- if not $apikeyfound -}}
+        {{- if eq $x "" -}}
+          {{- $x = printf "%q: f%q" "Api-Key" "{MY_API_KEY}" -}}
+        {{- else -}}
+          {{- $x = printf "%s, %q: f%q" $x "Api-Key" "{MY_API_KEY}" -}}
+        {{- end -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+  {{- printf "headers = { %s }" $x -}}
+{{- end -}}
+
+{{- define "rejecteddisclaimer" -}}
+  {{- if ne .ErrorMsg "valid" -}}
+    {{- $x := "Disclaimer - Request to a rejected router" -}}
+    {{- printf "# %s\nprint(%q)\n\n" $x $x -}}
+  {{- end -}}
+{{- end -}}
+
+{{- define "pythonrequest" -}}
+  {{- $p := "\n" -}}
+  {{- $router := "" -}}
+  {{- $endpointcomment := "# OpenAI 'gpt4' deployment example" -}}
+  {{- $endpoint := "openai/deployments/gpt4/chat/completions?api-version=2023-12-01-preview" -}}
+  {{- range $index, $object := .Objects -}}
+    {{- if eq $object.Key "path" -}}
+      {{- $router = $object.Fields.Value -}}
+    {{- else if eq $object.Key "endpoint" -}}
+      {{- if ne $object.Fields.Value "" -}}
+        {{- $endpointcomment = "# Keeping empty since endpoint defined in outbound" -}}
+        {{- $endpoint = "" -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+  {{- printf "%simport requests\n" $p -}}
+  {{- template "importos" . -}}
+  {{- $p := "\n" -}}
+  {{- $p = printf "%s# Host & port values for Gecholog.ai\n" $p -}}
+  {{- $p = printf "%sgechologhost = %q\n\n" $p "http://localhost:5380" -}}
+  {{- $p = printf "%srouter = %q\n\n" $p $router -}}
+  {{- $p = printf "%s%s\n" $p $endpointcomment -}}
+  {{- $p = printf "%sendpoint = %q\n" $p $endpoint -}}
+  {{- printf "%s\n" $p -}}
+  {{- template "requestheaders" . -}}
+  {{- println -}}
+  {{- $p := "" -}}
+  {{- $p = printf "%spayload = { %q: [ { %q: %q, %q: %q }, { %q: %q, %q: %q } ], %q: 15 }\n\n" $p "messages" "role" "system" "content" "Assistant is a large language model trained by OpenAI." "role" "user" "content" "Who are the founders of Microsoft?" "max_tokens" -}}
+  {{- $p = printf "\n%s# Make the request\n" $p -}}
+  {{- $p = printf "%sresponse = requests.post(f%q,headers=headers,json=payload)\n\n" $p "{gechologhost}{router}{endpoint}" -}}
+  {{- printf "%s" $p -}}
+  {{- $p := "" -}}
+  {{- template "rejecteddisclaimer" . -}}
+  {{- $p = printf "%s# Print the response\n" $p -}}
+  {{- $p = printf "%sprint(response.status_code)\n" $p -}}
+  {{- $p = printf "%sprint(response.json())\n" $p -}}
+  {{- printf "%s\n" $p -}}
+{{- end -}}
